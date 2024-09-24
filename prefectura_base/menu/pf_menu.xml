@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<odoo>
+    <data>
+<!-- Configuración Menu -->
+    <menuitem id="menu_principal_prefectura" name="Prefectura"/>
+
+    <menuitem id="menu_configuracion"
+              name="Configuarción"
+              parent="menu_principal_prefectura"
+              sequence="50"/>
+    <!-- <menuitem id="menu_edu_Generales" name="Generales" parent="menu_configuracion" sequence="10"/>
+    <menuitem id="menu_edu_catalogo" name="Catálogo" parent="menu_configuracion" sequence="11"/> -->
+
+    <!-- <menuitem id="menu_op_course_sub"
+              name="Courses"
+              parent="menu_principal_course"
+              sequence="10"
+              action="act_open_op_course_view"
+              groups="group_op_back_office,group_op_back_office_admin"/>
+
+    <menuitem id="menu_op_batch_sub"
+              name="Batches"
+              parent="menu_principal_course"
+              sequence="20"
+              action="act_open_op_batch_view"
+              groups="group_op_back_office,group_op_back_office_admin"/>
+
+    <menuitem id="menu_op_department_sub"
+              name="Department"
+              parent="menu_principal_course"
+              sequence="20"
+              action="act_open_op_department_view"
+              groups="group_op_back_office,group_op_back_office_admin"/>
+
+    <menuitem id="menu_principal_subject"
+              name="Subject Management"
+              parent="menu_principal"
+              sequence="20"/>
+
+     -->
+
+</data>
+</odoo>

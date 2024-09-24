@@ -1,0 +1,15 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_gi_beneficiario,gi.beneficiario,model_gi_beneficiario,,1,1,1,1
+access_gi_categoria_beneficario,gi.categoria_beneficario,model_gi_categoria_beneficario,,1,1,1,1
+
+access_gi_categoria_beneficario,gi.categoria_beneficario,model_gi_categoria_beneficario,,1,1,1,1
+access_gi_categoria_beneficario,gi.categoria_beneficario,model_gi_categoria_beneficario,,1,1,1,1
+
+access_gi_catalogo,gi.catalogo,model_gi_catalogo,,1,1,1,1
+access_gi_catalogo_items,gi.catalogo_items,model_gi_catalogo_items,,1,1,1,1
+
+
+access_gi_area,gi.area,model_gi_area,,1,1,1,1
+
+access_gi_servicio,gi.servicio,model_gi_servicio,,1,1,1,1
+access_gi_personal,gi.personal,model_gi_personal,,1,1,1,1
