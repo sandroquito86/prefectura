@@ -24,20 +24,18 @@ Long description of module's purpose
     'data': [
         'security/ir.model.access.csv',
         'views/gi_beneficiarios_menu_view.xml',
-        # CATALOGO
-        'views/catalogo/gi_catalogo_view.xml',          
-        'views/catalogo/gi_catalogo_items_view.xml', 
-        'views/catalogo/gi_catalogo_area_view.xml',
-         'views/catalogo/gi_catalogo_servicio_view.xml',
-         
-
         #CONFIGURACION
         'views/configuracion/gi_pais_view.xml',
-        'views/configuracion/gi_provincia_view.xml',  
-        'views/configuracion/gi_categoria_beneficiario_view.xml', 
-       
+        'views/configuracion/gi_provincia_view.xml',          
+        # CATALOGO
+        'views/configuracion/catalogo/gi_catalogo_view.xml',          
+        'views/configuracion/catalogo/gi_catalogo_items_view.xml', 
+        'views/configuracion/catalogo/gi_catalogo_area_view.xml',
+        'views/configuracion/catalogo/gi_catalogo_servicio_view.xml',
+        # PLANIFICACIÓN
+        'views/planificacion/gi_asignacion_servicio_view.xml',
         #REGISTRO  
-        'views/registro/gi_beneficiarios_view.xml',
+       
         'views/registro/gi_personal_view.xml',       
     ],
     # only loaded in demonstration mode

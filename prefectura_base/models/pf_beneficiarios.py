@@ -5,13 +5,13 @@ from dateutil.relativedelta import relativedelta
 
 
 class Beneficiarios(models.Model):
-    _name = 'gi.beneficiario'
+    _name = 'pf.beneficiario'
     _description = 'Beneficiarios'
 
     
     name = fields.Char(string="Nombre del Beneficiario", compute="_compute_name", store=True)
     image = fields.Image(string="Imagen del Beneficio")  # Campo para la imagen
-    category_ids = fields.Many2many('gi.categoria_beneficario', 'gi_beneficiario_categoria_rel', 'beneficiario_id', 'categoria_id', 
+    category_ids = fields.Many2many('pf.categoria_beneficario', 'gi_beneficiario_categoria_rel', 'beneficiario_id', 'categoria_id', 
                                     string='Categorías')  
     apellido_paterno = fields.Char(string='Apellido Paterno')
     apellido_materno = fields.Char(string='Apellido Materno')
@@ -51,7 +51,7 @@ class Beneficiarios(models.Model):
 
 class CategoriaBeneficiario(models.Model):
 
-    _name = "gi.categoria_beneficario"
+    _name = "pf.categoria_beneficario"
     _description = "Categoría de Beneficiario"
 
     def _get_default_color(self):

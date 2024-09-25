@@ -25,9 +25,11 @@ Long description of module's purpose
         'security/pf_security.xml',
         'security/ir.model.access.csv',
         'data/data_base.xml',
-        'menu/pf_menu.xml',
+        'views/pf_menu_view.xml',
         'views/pf_catalogo_items_views.xml',
         'views/pf_catalogo_views.xml',
+        'views/pf_categoria_beneficiario_view.xml',
+        'views/pf_beneficiarios_view.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
