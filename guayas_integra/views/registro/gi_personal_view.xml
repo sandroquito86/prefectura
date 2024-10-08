@@ -175,7 +175,7 @@
             <field name="view_mode">kanban,tree,form</field>
         </record>
 
-        <menuitem id="menu_gi_personal" name="Personal" action="action_gi_personal" parent="menu_gi_registro" sequence="20"/>
+        <menuitem id="menu_gi_personal" name="Personal" action="action_gi_personal" parent="menu_gi_registro" sequence="10"/>
 
 
     </data>

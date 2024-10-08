@@ -46,7 +46,7 @@
         <menuitem id="menu_action_pf_catalogo"
               name="Catálogo"
               action="action_pf_catalogo"
-              parent="menu_pf_catalogo_general"
+              parent="menu_pf_configuracion"
               sequence="1" />
 
     </data>

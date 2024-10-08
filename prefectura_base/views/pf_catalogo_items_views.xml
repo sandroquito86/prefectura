@@ -85,7 +85,7 @@
             <field name="view_mode">tree,form</field>
         </record>
 
-        <menuitem name="Items de Catálogos" id="menu_action_pf_items" parent="menu_pf_catalogo_general" action="action_pf_items" sequence="2" />
+        <menuitem name="Items de Catálogos" id="menu_action_pf_items" parent="menu_pf_configuracion" action="action_pf_items" sequence="2" />
 
     </data>
 </odoo>

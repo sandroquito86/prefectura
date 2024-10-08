@@ -3,6 +3,7 @@
 from odoo.exceptions import ValidationError
 from odoo import models, fields, api
 import re
+from .. import utils
 
 class Beneficiario(models.Model):
     _name = 'mz.beneficiario'
@@ -52,35 +53,13 @@ class Beneficiario(models.Model):
     @api.onchange('tipo_documento', 'numero_documento')
     def _onchange_documento(self):
         if self.tipo_documento == 'dni' and self.numero_documento:
-            if not self.validar_cedula(self.numero_documento):
+            if not utils.validar_cedula(self.numero_documento):
                 return {'warning': {
                     'title': "Cédula Inválida",
                     'message': "El número de cédula ingresado no es válido."
                 }}
 
-    def validar_cedula(self, cedula):
-        if not cedula or len(cedula) != 10 or not cedula.isdigit():
-            return False
-
-        # Extraer los dígitos
-        digitos = [int(d) for d in cedula]
-
-        # Aplicar el algoritmo de validación
-        suma = 0
-        for i in range(9):
-            if i % 2 == 0:
-                v = digitos[i] * 2
-                if v > 9:
-                    v -= 9
-                suma += v
-            else:
-                suma += digitos[i]
-
-        modulo = suma % 10
-        verificador = 0 if modulo == 0 else 10 - modulo
-
-        # Comparar el dígito verificador calculado con el proporcionado
-        return verificador == digitos[9]
+    
     
 
     def _validar_email(self, email):
@@ -94,7 +73,7 @@ class Beneficiario(models.Model):
     def _check_documento(self):
         for record in self:
             if record.tipo_documento == 'dni':
-                if not self.validar_cedula(record.numero_documento):
+                if not utils.validar_cedula(record.numero_documento):
                     raise ValidationError("El número de cédula ingresado no es válido.")
                 
     # @api.model

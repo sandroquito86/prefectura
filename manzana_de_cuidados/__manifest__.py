@@ -34,10 +34,12 @@ Long description of module's purpose
         'views/mz_catalogo_items_views.xml',
         'views/mz_programas_view.xml',
         'views/views_gestion_academica/mz_slide_channel_inherit_views.xml',
-        'views/views_empleado/mz_empleado_view.xml',
+        
         'views/views_servicio/mz_asignacion_servicio_view.xml',
         'views/views_servicio/mz_horarios_servicio_view.xml',
         'views/views_servicio/mz_planificacion_servicio_view.xml',
+
+        'views/wizard/mz_wizard_quitar_publicacion_programa.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

@@ -17,17 +17,13 @@ class GenerarHorarios(models.Model):
     _description = 'Generar Horarios'
     _rec_name = 'servicio_id'
     #_order = 'unidad_id , mes_genera'
-    @api.model
-    def _get_tipo_servicios_domain(self):
-        catalogo_id = self.env.ref('manzana_de_cuidados.tipo_servicio').id
-        return [('catalogo_id', '=', catalogo_id)]
     
     @api.model
     def _default_anio(self):
         return time.strftime('%Y')   
     name = fields.Char(string='Descripción', required=True, compute='_compute_name',)
-    servicio_id = fields.Many2one(string='Servicio', comodel_name='mz.items', ondelete='restrict',domain=_get_tipo_servicios_domain)   
-    personal_id = fields.Many2one(string='Personal', comodel_name='mz.empleado', ondelete='restrict',) 
+    servicio_id = fields.Many2one(string='Servicio', comodel_name='mz.asignacion.servicio', ondelete='restrict')  
+    personal_id = fields.Many2one(string='Personal', comodel_name='hr.employee', ondelete='restrict',) 
     mes_genera = fields.Selection([('1', 'ENERO'), ('2', 'FEBRERO'), ('3', 'MARZO'), ('4', 'ABRIL'), ('5', 'MAYO'), ('6', 'JUNIO'), ('7', 'JULIO'), ('8', 'AGOSTO'), 
                                    ('9', 'SEPTIEMBRE'), ('10', 'OCTUBRE'), ('11', 'NOVIEMBRE'), ('12', 'DICIEMBRE')],string='Mes a Generar')
     anio = fields.Char(string='Año', default=_default_anio)
@@ -38,9 +34,12 @@ class GenerarHorarios(models.Model):
     @api.depends('servicio_id')
     def _compute_author_domain_field(self):
         for record in self:
-            empleados = self.env['mz.asignacion.servicio'].search([('servicio_id', '=', record.servicio_id.id)]).mapped('personal_ids')
-            if empleados:
-                record.domain_personal_id = [('id', 'in', empleados.ids)]
+            if record.servicio_id:
+                empleados = self.env['mz.asignacion.servicio'].search([('id', '=', record.servicio_id.id)]).mapped('personal_ids')
+                if empleados:
+                    record.domain_personal_id = [('id', 'in', empleados.ids)]
+                else:
+                    record.domain_personal_id = [('id', 'in', [])]
             else:
                 record.domain_personal_id = [('id', 'in', [])]
     

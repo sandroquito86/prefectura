@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+        <record id="view_slide_channel_form_inherit" model="ir.ui.view">
+            <field name="name">view.slide.channel.form.inherit</field>
+            <field name="model">slide.channel</field>
+            <field name="inherit_id" ref="website_slides.view_slide_channel_form"/>
+            <field name="arch" type="xml">
+                <xpath expr="//page[@name='karma_rules']" position="after">
+                    <page string="Asistencias" name="asistencias_mz_elearning">
+                        <!-- TEMPLATE RENDERIZADO CON JS -->
+                        <widget name="mze_attendance_beneficiary"/>
+                    </page>
+                </xpath>
+            </field>
+        </record>
+
+    </data>
+</odoo>

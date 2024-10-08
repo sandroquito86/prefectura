@@ -11,29 +11,39 @@ class AsignacionHorarios(models.Model):
     _name = 'mz.horarios.servicio'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Asignación de Horarios' 
-    _rec_name = 'servicio_id'
 
-    @api.model
-    def _get_tipo_servicios_domain(self):
-        catalogo_id = self.env.ref('manzana_de_cuidados.tipo_servicio').id
-        return [('catalogo_id', '=', catalogo_id)]
     
-    servicio_id = fields.Many2one(string='Servicio', comodel_name='mz.items', ondelete='restrict',domain=_get_tipo_servicios_domain)   
-    personal_id = fields.Many2one(string='Personal', comodel_name='mz.empleado', ondelete='restrict',)   
+    name = fields.Char(string='Nombre',  compute='_compute_name', store=True)
+    
+    servicio_id = fields.Many2one(string='Servicio', comodel_name='mz.asignacion.servicio', ondelete='restrict')   
+    asi_servicio_id = fields.Many2one(string='Servicios', comodel_name='mz.items', ondelete='restrict')
+    personal_id = fields.Many2one(string='Personal', comodel_name='hr.employee', ondelete='restrict',)   
     domain_personal_id = fields.Char(string='Domain Personal',compute='_compute_author_domain_field')    
     detalle_horario_ids = fields.One2many(string='Detalle Horarios', comodel_name='mz.detalle.horarios', inverse_name='asignacion_horario_id',)
     
     
     
+    @api.depends('servicio_id')
+    def _compute_name(self):
+        for record in self:
+            if record.servicio_id:
+                record.name = f'Horario de {record.servicio_id.name}'
+                record.asi_servicio_id = record.servicio_id.servicio_id.id
+            else:
+                record.name = 'Horario de Servicio'
+
 
     _sql_constraints = [('name_unique', 'UNIQUE(servicio_id,personal_id)', "Ya existe una persona con este servicio.")]    
 
     @api.depends('servicio_id')
     def _compute_author_domain_field(self):
         for record in self:
-            empleados = self.env['mz.asignacion.servicio'].search([('servicio_id', '=', record.servicio_id.id)]).mapped('personal_ids')
-            if empleados:
-                record.domain_personal_id = [('id', 'in', empleados.ids)]
+            if record.servicio_id:
+                empleados = self.env['mz.asignacion.servicio'].search([('id', '=', record.servicio_id.id)]).mapped('personal_ids')
+                if empleados:
+                    record.domain_personal_id = [('id', 'in', empleados.ids)]
+                else:
+                    record.domain_personal_id = [('id', 'in', [])]
             else:
                 record.domain_personal_id = [('id', 'in', [])]
 

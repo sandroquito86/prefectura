@@ -4,5 +4,6 @@ from . import controllers
 from . import models
 from . import model_gestion_academica
 from . import model_gestion_servicio
-from . import model_empleado
+from . import utils
+from . import wizard
 

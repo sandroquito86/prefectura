@@ -18,23 +18,21 @@ Long description of module's purpose
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','mail'],
+    'depends': ['hr','base','mail'],
 
     # always loaded
     'data': [
         'security/pf_security.xml',
         'security/ir.model.access.csv',
         'data/data_base.xml',
-        'data/data_base_grado.xml',
-        'data/data_tipo_discapacidad.xml',
+        'data/ciudad_data.xml',
         'views/pf_menu_view.xml',
-        'views/pf_tipo_discapacidad_view.xml',
         'views/pf_catalogo_items_views.xml',
         'views/pf_catalogo_views.xml',
         'views/pf_categoria_beneficiario_view.xml',
         'views/pf_beneficiarios_view.xml',
         'views/pf_sucursal_views.xml',
-        
+        'views/views_empleado/pf_empleado_view.xml',
     ],
     # only loaded in demonstration mode
     'demo': [

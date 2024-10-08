@@ -1,12 +1,9 @@
 <odoo>
     <data>
-         <menuitem name="Prefectura" id="menu_prefectura_root" sequence="10"/>
-        <menuitem name="Registro" id="menu_pf_registro" parent="menu_prefectura_root" sequence="10"/>
+        <menuitem name="Prefectura" id="menu_prefectura_root" sequence="10"/>
         <menuitem name="Configuración" id="menu_pf_configuracion" parent="menu_prefectura_root" sequence="30"/>
-
-        <menuitem name="Catálogo General" id="menu_pf_catalogo_general" parent="menu_pf_configuracion" sequence="30"/>
-        <menuitem name="Catálogo" id="menu_pf_catalogos" parent="menu_pf_configuracion" sequence="30"/>
-
-
+        <menuitem name="Registro" id="menu_pf_registro" parent="menu_prefectura_root" sequence="10"/>
+        <menuitem id="menu_pf_empleado" name="Empleado"  parent="menu_prefectura_root" sequence="8"/>
+    
     </data>
 </odoo>

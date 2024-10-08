@@ -18,10 +18,14 @@
             <field name="descripcion">Catálogo de etnias</field>
         </record>
         <record id="tipo_documento" model="pf.catalogo">
-            <field name="name">Tipo de Documento</field>
+            <field name="name">Tipo de Documento Identidad</field>
             <field name="descripcion">Catálogo de tipos de documento</field>
         </record>
-     
+        <record id="tipos_discapacidad" model="pf.catalogo">
+            <field name="name">Tipos de Discapacidad</field>
+            <field name="descripcion">Catálogo de tipos de discapacidad</field>
+        </record>
+
         <!-- modulos activos -->
         <record id="modulo_1" model="pf.modulo">
             <field name="name">Guayas integra</field>
@@ -160,6 +164,48 @@
             <field name="catalogo_id" ref="tipo_documento"/>
         </record>
 
-       
+        <!-- Tipos de Discapacidad -->
+        <record id="discapacidad_visual" model="pf.items">
+            <field name="name">Visual</field>
+            <field name="descripcion">Discapacidad visual</field>
+            <field name="catalogo_id" ref="tipos_discapacidad"/>
+        </record>
+        <record id="discapacidad_auditiva" model="pf.items">
+            <field name="name">Auditiva</field>
+            <field name="descripcion">Discapacidad auditiva</field>
+            <field name="catalogo_id" ref="tipos_discapacidad"/>
+        </record>
+        <record id="discapacidad_motriz" model="pf.items">
+            <field name="name">Motriz</field>
+            <field name="descripcion">Discapacidad motriz</field>
+            <field name="catalogo_id" ref="tipos_discapacidad"/>
+        </record>
+        <record id="discapacidad_intelectual" model="pf.items">
+            <field name="name">Intelectual</field>
+            <field name="descripcion">Discapacidad intelectual</field>
+            <field name="catalogo_id" ref="tipos_discapacidad"/>
+        </record>
+        <record id="discapacidad_psicosocial" model="pf.items">
+            <field name="name">Psicosocial</field>
+            <field name="descripcion">Discapacidad psicosocial</field>
+            <field name="catalogo_id" ref="tipos_discapacidad"/>
+        </record>
     </data>
+
+    <!-- Tipo de Documento -->
+        <record id="tipo_documentos" model="pf.catalogo">
+            <field name="name">Tipo de Documentos</field>
+            <field name="descripcion">Catálogo de tipos de documento</field>
+        </record>
+        <!-- items de tipo de documentos  -->
+        <record id="tipo_documento_oficio" model="pf.items">
+            <field name="name">Oficio</field>
+            <field name="descripcion">Documento de oficio</field>
+            <field name="catalogo_id" ref="tipo_documentos"/>
+        </record>
+        <record id="tipo_documento_memoran" model="pf.items">
+            <field name="name">Memorando</field>
+            <field name="descripcion">Documento de memorando</field>
+            <field name="catalogo_id" ref="tipo_documentos"/>
+        </record>
 </odoo>
