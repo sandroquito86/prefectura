@@ -1,0 +1,29 @@
+<odoo>
+    <data noupdate="1">
+        <record id="pf_tipo_discapacidad_visual" model="pf.tipo_discapacidad">
+            <field name="name">Visual</field>
+            <field name="descripcion">Discapacidad visual</field>
+            
+        </record>
+        <record id="pf_tipo_discapacidad_auditiva" model="pf.tipo_discapacidad">
+            <field name="name">Auditiva</field>
+            <field name="descripcion">Discapacidad auditiva</field>
+            
+        </record>
+        <record id="pf_tipo_discapacidad_motriz" model="pf.tipo_discapacidad">
+            <field name="name">Motriz</field>
+            <field name="descripcion">Discapacidad motriz</field>
+            
+        </record>
+        <record id="pf_tipo_discapacidad_intelectual" model="pf.tipo_discapacidad">
+            <field name="name">Intelectual</field>
+            <field name="descripcion">Discapacidad intelectual</field>
+            
+        </record>
+        <record id="pf_tipo_discapacidad_psicosocial" model="pf.tipo_discapacidad">
+            <field name="name">Psicosocial</field>
+            <field name="descripcion">Discapacidad psicosocial</field>
+            
+        </record>
+    </data>
+</odoo>

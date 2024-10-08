@@ -1,0 +1,326 @@
+<odoo>
+  <data>
+    <record model="ir.ui.view" id="asset_graph_view">
+      <field name="name">asset.asset.graph</field>
+      <field name="model">asset.asset</field>
+      <field name="type">graph</field>
+      <field name="arch" type="xml">
+        <graph string="Activo" type="bar">
+          <field name="categoria_id" />
+          <field name="reparto_id" />
+        </graph>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="asset_graph_view_estado">
+      <field name="name">asset.asset.graph</field>
+      <field name="model">asset.asset</field>
+      <field name="type">graph</field>
+      <field name="arch" type="xml">
+        <graph string="Activo" type="bar">
+          <field name="categoria_id" />
+          <field name="reparto_id" />
+        </graph>
+      </field>
+    </record>
+
+    <record id="assets_form_view" model="ir.ui.view">
+      <field name="name">asset.asset.form</field>
+      <field name="model">asset.asset</field>
+      <field name="arch" type="xml">
+        <form string="Assets" version="7.0">
+          <sheet>
+            <div class="oe_right oe_button_box" style="width: 500px;" name="buttons"></div>
+            <field name="image_medium" widget="image" class="oe_avatar oe_left" />
+            <group col="3">
+              <group>
+                <field name="grupo_id" type="object" placeholder="Grupo...." options="{'no_create': True, 'no_open': True, 'no_create_edit': True}" />
+              </group>
+              <group>
+                <field name="categoria_id" domain="[('grupo_id','=',grupo_id)]" placeholder="Categoria...." options="{'no_create': True, 'no_open': True, 'no_create_edit': True}" />
+              </group>
+              <group>
+                <field name="tipo_id" domain="[('categoria_id','=',categoria_id)]" placeholder="Tipo...." options="{'no_create': True, 'no_open': True, 'no_create_edit': True}" />
+                <field name="componente_id_domain" invisible="1" />
+              </group>
+            </group>
+
+            <group >
+              <group colspan="2">
+                <h1>
+                  <field name="name" />
+                </h1>
+              </group>
+              <group>
+                <field name="reparto_id" readonly="1" options="{'no_create': True, 'no_open': True, 'no_create_edit': True}" />
+                <field name="empleado_id" placeholder="Seleccione el responsable del activos.." context="{'form_view_ref': 'th_gestion_hr.view_hr_personal_lectura_form'}" options="{'no_create': True,  'no_create_edit': True}" />
+                <field name="user_id" invisible="1" />
+              </group>
+              <group>
+                <field name="departamento_id" invisible="1" placeholder="Seleccione el departamento del responsable del activo.." options="{'no_create_edit': True, 'no_open': True,'no_create': True}" />
+                <field name="criticality" />
+                <field name="estado_id" options="{'no_create': True, 'no_open': True, 'no_create_edit': True}" required="1" />
+                <field name="active" invisible="1" />
+              </group>
+            </group>
+            <group>
+              <h2 attrs="{'invisible':[('id','>', 0)]}">(*) Guarde el activo para crear COMPONENTES</h2>
+            </group>
+            <notebook>
+              <page name="info" string="Información">
+                <group >
+                  <group>
+                    <field name="purchase_date" />
+                    <field name="serial" widget="auto_fill"/>
+                    <field name="asset_number" />
+                    <field name="esbye" />
+                  </group>
+                  <group>
+                    <field name="color" required="1" options="{'no_create': True, 'no_open': True, 'no_create_edit': True}"/>
+                    <field name="asset_id_domain" invisible="1" />
+                    <field name="marca_id" required="1" domain="asset_id_domain" options="{'no_create': True, 'no_open': True, 'no_create_edit': True}"/>
+                    <field name="modelo_id" required="1" domain="[('marca_id','=',marca_id)]" context="{'default_marca_id': marca_id, 'form_view_ref': 'prefectura_equipos.view_pg_equipos_modelo_form2'}" />
+                    <field name="motor" />
+                    <field name="chasis" />
+                  </group>
+                </group>
+              </page>
+
+              <page name="caracteristicas" string="Características Generales">
+                <field name="detalle_caracteristicas_ids" widget="one2many">
+                  <tree string="Caracteristicas" editable="bottom">
+                    <field name="caracteristica_id_domain" invisible="1" />
+                    <field name="caracteristica_id" domain="caracteristica_id_domain" options="{'no_create': True, 'no_open': True, 'no_create_edit': True}" />
+                    <field name="valor_id" context="{'default_caracteristica_id': caracteristica_id, 'show_attribute': False}" options="{'no_open': True, 'no_create_edit': True}" />
+                  </tree>
+                </field>
+              </page>
+              <page name="caracteristicas_esp" string="Características Técnicas">
+                <field name="detalle_caracteristica_especifica_ids" widget="one2many" readonly="1">
+                  <tree string="Caracteristicas" editable="bottom">
+                    <field name="caracteristica_id_domain" invisible="1" />
+                    <field name="caracteristica_id" domain="caracteristica_id_domain" options="{'no_create': True, 'no_open': True, 'no_create_edit': True}" />
+                    <field name="valor_id" context="{'default_caracteristica_id': caracteristica_id, 'show_attribute': False}" options="{'no_open': True, 'no_create_edit': True}" />
+                  </tree>
+                </field>
+              </page>
+              <page name="garantia" string="Garantía">
+                <group>
+                  <group>
+                    <field name="warranty_start_date" placeholder="Fecha de nicio de garantía.." />
+                    <field name="start_date" string="Fecha de puesta en producción" placeholder="Fecha que empieza a usarse.." />
+                  </group>
+                  <group>
+                    <field name="warranty_end_date" placeholder="Fecha de fin de garantía.." />
+                  </group>
+                </group>
+              </page>
+              
+              <page name="componente" string="Componentes" attrs="{'invisible':[('id','=', False)]}">
+                <field name="componente_ids" readonly="1" context="{'form_view_ref': 'prefectura_equipos.view_asset_componente_presentacion_form'}">
+                  <tree>
+                    <field name="asset_id" invisible="1" />
+                    <field name="name" />
+                    <field name="marca_id" />
+                    <field name="modelo_id" />
+                    <field name="serial"/>
+                  </tree>
+                </field>
+              </page>
+              <page name="biblioteca" string="Biblioteca">
+                <group>
+                  <field name="file_biblioteca_ids" widget="many2many_binary" />
+                </group>
+              </page>
+            </notebook>
+          </sheet>
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" />
+            <field name="message_ids" widget="mail_thread" />
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <record id="view_asset_asset_form_inherited" model="ir.ui.view">
+      <field name="name">asset.asset.form</field>
+      <field name="model">asset.asset</field>
+      <field name="inherit_id" ref="assets_form_view" />
+      <field name="type">form</field>
+      <field name="groups_id" eval="[(6, 0, [ref('grupo_equipos_registrador_general'),ref('grupo_equipos_administrador_general')])]" />
+      <field name="arch" type="xml">
+        <xpath expr="//field[@name='reparto_id']" position="attributes">
+          <attribute name="readonly">False</attribute>
+        </xpath>
+      </field>
+    </record>
+
+    <record id="assets_form_presentacion_view" model="ir.ui.view">
+      <field name="name">asset.asset.form</field>
+      <field name="model">asset.asset</field>
+      <field name="arch" type="xml">
+        <form string="Assets" version="7.0">
+          <header>
+            <field name="estado_id" widget="statusbar" attrs="{'invisible':[('categoria_id','=', False)]}" />
+          </header>
+          <sheet>
+            <div class="oe_right oe_button_box" style="width: 300px;" name="buttons"></div>
+            <field name="image_medium" widget="image" class="oe_avatar oe_left" readonly="1" />
+            <div class="oe_title">
+              <field name="categoria_id" readonly="1" />
+            </div>
+            <group>
+              <group colspan="2">
+                <h1>
+                  <field name="name" />
+                </h1>
+              </group>
+              <group>
+                <field name="reparto_id" readonly="1" />
+                <field name="criticality" readonly="1" />
+              </group>
+              <group>
+                <field name="departamento_id" invisible="1" readonly="1" />
+                <field name="empleado_id" readonly="1" />
+                <field name="user_id" />
+                <field name="active" invisible="1" />
+              </group>
+            </group>
+
+            <notebook>
+              <page name="info" string="Información General">
+                <group col="3">
+                  <group>
+                    <field name="purchase_date" readonly="1" />
+                    <field name="serial" readonly="1" />
+                  </group>
+                  <group>
+                    <field name="asset_number" readonly="1" />
+                    <field name="esbye" />
+                  </group>
+                  <group>
+                    <field name="color" required="1" />
+                    <field name="marca_id" readonly="1" />
+                    <field name="modelo_id" readonly="1" />
+                    <field name="motor" />
+                    <field name="chasis" />
+                  </group>
+                </group>
+              </page>
+              <page name="caracteristicas" string="Caracteristicas Generales">
+                <field name="detalle_caracteristicas_ids" widget="one2many" context="{'show_attribute': False}" readonly="1">
+                  <tree string="Caracteristicas" editable="bottom">
+                    <field name="caracteristica_id" string="Características" />
+                    <field name="valor_id" />
+                  </tree>
+                </field>
+              </page>
+              <page name="caracteristicas_esp" string="Características Técnicas">
+                <field name="detalle_caracteristica_especifica_ids" widget="one2many" readonly="1">
+                  <tree string="Caracteristicas" editable="bottom">
+                    <field name="caracteristica_id_domain" invisible="1" />
+                    <field name="caracteristica_id" domain="caracteristica_id_domain" options="{'no_create': True, 'no_open': True, 'no_create_edit': True}" />
+                    <field name="valor_id" context="{'default_caracteristica_id': caracteristica_id, 'show_attribute': False}" options="{'no_open': True, 'no_create_edit': True}" />
+                  </tree>
+                </field>
+              </page>
+              <page name="garantia" string="Garantía">
+                <group>
+                  <group>
+                    <field name="warranty_start_date" readonly="1" />
+                    <field name="start_date" readonly="1" />
+                  </group>
+                  <group>
+                    <field name="warranty_end_date" readonly="1" />
+                  </group>
+                </group>
+              </page>
+              
+              
+            </notebook>
+          </sheet>
+          <div class="oe_chatter">
+            <field name="message_follower_ids" widget="mail_followers" />
+            <field name="message_ids" widget="mail_thread" />
+          </div>
+        </form>
+      </field>
+    </record>
+
+    <record model="ir.ui.view" id="assets_search">
+      <field name="name">asset.asset</field>
+      <field name="model">asset.asset</field>
+      <field name="arch" type="xml">
+        <search string="Busqueda activo">
+          <field name="name" />
+          <field name="reparto_id" />
+          <field name="empleado_id" />
+          <field name="asset_number" />
+          <field name="criticality" />
+          <field name="categoria_id" />
+          <field name="marca_id" />
+          <field name="detalle_caracteristicas_ids" string="Características Generales" filter_domain="[('detalle_caracteristicas_ids.valor_id', 'ilike', self)]" />
+          <field name="detalle_caracteristica_especifica_ids" string="Características Específicas" filter_domain="[('detalle_caracteristica_especifica_ids.valor_id', 'ilike', self)]" />
+          <field name="componente_ids" string="Componentes" />
+          <field name="estado_id" />
+          <separator />
+          <group expand="0" string="Group By">
+            <filter name="reparto" string="Reparto" context="{'group_by': 'reparto_id'}" />
+            <filter name="empleado" string="Empleado" context="{'group_by': 'empleado_id'}" />
+            <filter name="grupo" string="Grupo" context="{'group_by': 'grupo_id'}" />
+            <filter name="categoria" string="Categoria" context="{'group_by': 'categoria_id'}" />
+            <filter name="tipo" string="Tipo de activo" context="{'group_by': 'tipo_id'}" />
+            <filter name="marca" string="Marca" context="{'group_by': 'marca_id'}" />
+            <filter name="estado" string="Estado" context="{'group_by': 'estado_id'}" />
+          </group>
+        </search>
+      </field>
+    </record>
+
+    <record id="assets_tree_view" model="ir.ui.view">
+      <field name="name">asset.asset.tree</field>
+      <field name="model">asset.asset</field>
+      <field name="arch" type="xml">
+        <tree string="Assets">
+          <field name="asset_number" />
+          <field name="serial" />
+          <field name="name" />
+          <field name="empleado_id" />
+          <field name="reparto_id" optional="hide"/>
+          <field name="estado_id" optional="hide"/>
+          <field name="detalle_caracteristicas_ids" widget="many2many_tags" optional="hide"/>
+          <field name="detalle_caracteristica_especifica_ids" string="Características Específicas" widget="many2many_tags" optional="hide"/>
+          <field name="componente_ids" widget="many2many_tags" optional="hide"/>
+        </tree>
+      </field>
+    </record>
+
+    <record model="ir.actions.act_window" id="asset_asset_action2">
+      <field name="name">Activo</field>
+      <field name="res_model">asset.asset</field>
+      <field name="view_mode">form</field>
+      <field name="view_id" ref="assets_form_presentacion_view" />
+    </record>
+
+    <record id="action_assets" model="ir.actions.act_window">
+      <field name="name">Ingreso de activos</field>
+      <field name="type">ir.actions.act_window</field>
+      <field name="res_model">asset.asset</field>
+      <field name="context" eval="{'search_default_reparto':1}"></field>
+      <field name="view_mode">tree,form,graph</field>
+      <field name="view_id" eval="False" />
+    </record>
+
+    <record id="action_activo_activo_server" model="ir.actions.server">
+      <field name="name">Ingreso de activos</field>
+      <field name="model_id" ref="model_asset_asset" />
+      <field name="binding_model_id" ref="model_asset_asset" />
+      <field name="state">code</field>
+      <field name="code">action = env['asset.asset'].ver_activos()</field>
+    </record>
+
+
+    <menuitem name="Ingreso de activos" action="action_activo_activo_server" id="menu_action_assets" parent="menu_maintenance_assets" groups="grupo_equipos_administrador_general,grupo_equipos_registrador_sucursal,grupo_equipos_registrador_general" sequence="20" />
+
+  </data>
+</odoo>

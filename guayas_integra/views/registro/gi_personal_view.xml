@@ -112,8 +112,10 @@
                                     <div invisible="not user_id" class="me-2">
                                         <widget name="hr_employee_chat" invisible="not context.get('chat_icon')"/>
                                     </div>
-                                    <!-- <field name="name" placeholder="Employee's Name" required="True" style="font-size: min(4vw, 2.6rem);"/> -->
-                                    <field name="nombre" placeholder="Employee's Name" required="True" style="font-size: min(4vw, 2.6rem);"/>
+                                    <field name="name" 
+                                    invisible="1"
+                                     force_save='1' style="font-size: min(4vw, 2.6rem);" required="0"/>
+                                    <field name="nombre" placeholder="Employee's Name" required="1" style="font-size: min(4vw, 2.6rem);"/>
                                 </h1>
                             </div>
                             <div class="o_employee_avatar m-0 p-0">
@@ -138,12 +140,12 @@
                             <group string="Lugar y Fecha de Nacimiento">
                                 <field name="identification_id" string="Cédula"/>
                                 <field name="birthday"/>
-                                <field name="edad"/> 
-                                <field name="country_id"/> 
-                                <field name="provincia_id"/>                             
+                                <field name="edad"/>
+                                <field name="country_id"/>
+                                <field name="provincia_id"/>
                             </group>
-                        </group>                      
-                       
+                        </group>
+
                     </sheet>
                     <div class="oe_chatter">
                         <field name="message_follower_ids" groups="base.group_user" options="{'post_refresh': 'recipients'}"/>
@@ -173,7 +175,7 @@
             <field name="view_mode">kanban,tree,form</field>
         </record>
 
-        <menuitem id="menu_gi_personal" name="Personal" action="action_gi_personal" parent="menu_gi_registro" sequence="10"/>
+        <menuitem id="menu_gi_personal" name="Personal" action="action_gi_personal" parent="menu_gi_registro" sequence="20"/>
 
 
     </data>

@@ -1,9 +1,11 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
-from odoo.exceptions import ValidationError
+from odoo.exceptions import ValidationError,UserError
 from string import ascii_letters, digits
 import string
+
+
 
 
 class Area(models.Model):
@@ -12,6 +14,29 @@ class Area(models.Model):
 
     
     name = fields.Char(string='Nombre', required=True)
+   
+    company_domain_id = fields.Char(default="[('phone', '=', '098')]",compute='_compute_author_domain_field')
+    attachment_ids = fields.Many2many(comodel_name='ir.attachment', relation='hr_doc_solicitud_movimiento_documento_rel', 
+                                      column1='rechazo_solicitud_id', column2='attachment_id', string='Archivo Adjunto')  
+    
+    reparto_id = fields.Many2one(
+        string='Reparto',
+        comodel_name='res.company',
+        ondelete='restrict',
+    )
+
+    
+    @api.onchange('name')
+    def _onchange_field(self):
+        pass
+        # raise UserError("Este es un mensaje de error personalizado para el usuario.")
+        
+    @api.depends('name')
+    def _compute_author_domain_field(self):
+        for record in self:
+            record.company_domain_id = "[('id', '=', 1)]"
+    
+    
     
 
     _sql_constraints = [

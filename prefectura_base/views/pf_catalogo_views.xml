@@ -28,7 +28,6 @@
                         </group>
                         <div class="oe_chatter">
                             <field name="message_follower_ids" widget="mail_followers" />
-                            <field name="activity_ids" widget="mail_activity" />
                             <field name="message_ids" widget="mail_thread" />
                         </div>
                     </sheet>
@@ -47,7 +46,7 @@
         <menuitem id="menu_action_pf_catalogo"
               name="Catálogo"
               action="action_pf_catalogo"
-              parent="menu_pf_configuracion"
+              parent="menu_pf_catalogo_general"
               sequence="1" />
 
     </data>

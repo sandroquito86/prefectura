@@ -18,7 +18,7 @@ Long description of module's purpose
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['base','hr','mail'],
+    'depends': ['base','hr','mail','prefectura_base'],
 
     # always loaded
     'data': [
@@ -34,9 +34,14 @@ Long description of module's purpose
         'views/configuracion/catalogo/gi_catalogo_servicio_view.xml',
         # PLANIFICACIÓN
         'views/planificacion/gi_asignacion_servicio_view.xml',
+        'views/planificacion/gi_asignacion_horarios_view.xml',
+        'views/planificacion/gi_generar_horario_view.xml',
+        
         #REGISTRO  
        
-        'views/registro/gi_personal_view.xml',       
+        'views/registro/gi_personal_view.xml',    
+        'views/registro/gi_sollicitud_beneficiario_view.xml',   
+          
     ],
     # only loaded in demonstration mode
     'demo': [

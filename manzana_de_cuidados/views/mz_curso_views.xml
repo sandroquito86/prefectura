@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<odoo>
+    <!-- Vista de Árbol para Cursos -->
+    <record id="view_curso_tree" model="ir.ui.view">
+        <field name="name">mz.curso.tree</field>
+        <field name="model">mz.curso</field>
+        <field name="arch" type="xml">
+            <tree string="Cursos">
+                <field name="name"/>
+                <field name="instructor_id"/>
+                <field name="capacidad"/>
+            </tree>
+        </field>
+    </record>
+
+    <!-- Vista de Formulario para Cursos -->
+    <record id="view_curso_form" model="ir.ui.view">
+        <field name="name">mz.curso.form</field>
+        <field name="model">mz.curso</field>
+        <field name="arch" type="xml">
+            <form string="Curso">
+                <sheet>
+                    <group>
+                        <field name="name"/>
+                        <field name="descripcion"/>
+                        <field name="instructor_id"/>
+                        <field name="capacidad"/>
+                    </group>
+                    <notebook>
+                        <page string="Horarios">
+                            <field name="horario_ids">
+                                <tree editable="bottom">
+                                    <field name="dia_semana"/>
+                                    <field name="hora_inicio"/>
+                                    <field name="hora_fin"/>
+                                </tree>
+                                <form string="Horario">
+                                    <group>
+                                        <field name="dia_semana"/>
+                                        <field name="hora_inicio"/>
+                                        <field name="hora_fin"/>
+                                    </group>
+                                </form>
+                            </field>
+                        </page>
+                        <page string="Inscripciones">
+                           
+                        </page>
+                        <page string="Tareas">
+                            
+                        </page>
+                    </notebook>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <!-- Acción para Cursos -->
+    <record id="action_curso" model="ir.actions.act_window">
+        <field name="name">Cursos</field>
+        <field name="res_model">mz.curso</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <!-- Menú para Cursos -->
+    <menuitem id="menu_curso" name="Cursos" parent="menu_academico" action="action_curso" sequence="30"/>
+</odoo>

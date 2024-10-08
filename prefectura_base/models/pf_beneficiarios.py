@@ -6,6 +6,7 @@ from dateutil.relativedelta import relativedelta
 
 class Beneficiarios(models.Model):
     _name = 'pf.beneficiario'
+    _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Beneficiarios'
 
     
@@ -23,6 +24,12 @@ class Beneficiarios(models.Model):
     pais_id = fields.Many2one('res.country', string='Pais', ondelete='restrict')
     provincia_id = fields.Many2one("res.country.state", string='Provincia', ondelete='restrict', 
                                    domain="[('country_id', '=?', pais_id)]")
+    user_id = fields.Many2one('res.users', string="Usuario", help="Usuario asociado para acceder al sistema")
+    modulo_ids = fields.Many2many(
+        'pf.modulo', 
+        string="Módulos",
+        help="Selecciona los módulos a los que pertenece este beneficiario"
+    )
     
     @api.depends('apellido_paterno', 'apellido_materno', 'primer_nombre', 'segundo_nombre')
     def _compute_name(self):

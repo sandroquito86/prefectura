@@ -21,11 +21,19 @@
             <field name="name">Tipo de Documento</field>
             <field name="descripcion">Catálogo de tipos de documento</field>
         </record>
-        <record id="tipos_discapacidad" model="pf.catalogo">
-            <field name="name">Tipos de Discapacidad</field>
-            <field name="descripcion">Catálogo de tipos de discapacidad</field>
+     
+        <!-- modulos activos -->
+        <record id="modulo_1" model="pf.modulo">
+            <field name="name">Guayas integra</field>
         </record>
 
+        <record id="modulo_2" model="pf.modulo">
+            <field name="name">Manzana de Cuidados</field>
+        </record>
+
+        <record id="modulo_3" model="pf.modulo">
+            <field name="name">Escuela y Programas de Deportes</field>
+        </record>
         <!-- Items -->
         <!-- Estado Civil -->
         <record id="estado_civil_soltero" model="pf.items">
@@ -152,31 +160,6 @@
             <field name="catalogo_id" ref="tipo_documento"/>
         </record>
 
-        <!-- Tipos de Discapacidad -->
-        <record id="discapacidad_visual" model="pf.items">
-            <field name="name">Visual</field>
-            <field name="descripcion">Discapacidad visual</field>
-            <field name="catalogo_id" ref="tipos_discapacidad"/>
-        </record>
-        <record id="discapacidad_auditiva" model="pf.items">
-            <field name="name">Auditiva</field>
-            <field name="descripcion">Discapacidad auditiva</field>
-            <field name="catalogo_id" ref="tipos_discapacidad"/>
-        </record>
-        <record id="discapacidad_motriz" model="pf.items">
-            <field name="name">Motriz</field>
-            <field name="descripcion">Discapacidad motriz</field>
-            <field name="catalogo_id" ref="tipos_discapacidad"/>
-        </record>
-        <record id="discapacidad_intelectual" model="pf.items">
-            <field name="name">Intelectual</field>
-            <field name="descripcion">Discapacidad intelectual</field>
-            <field name="catalogo_id" ref="tipos_discapacidad"/>
-        </record>
-        <record id="discapacidad_psicosocial" model="pf.items">
-            <field name="name">Psicosocial</field>
-            <field name="descripcion">Discapacidad psicosocial</field>
-            <field name="catalogo_id" ref="tipos_discapacidad"/>
-        </record>
+       
     </data>
 </odoo>

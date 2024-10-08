@@ -25,11 +25,16 @@ Long description of module's purpose
         'security/pf_security.xml',
         'security/ir.model.access.csv',
         'data/data_base.xml',
+        'data/data_base_grado.xml',
+        'data/data_tipo_discapacidad.xml',
         'views/pf_menu_view.xml',
+        'views/pf_tipo_discapacidad_view.xml',
         'views/pf_catalogo_items_views.xml',
         'views/pf_catalogo_views.xml',
         'views/pf_categoria_beneficiario_view.xml',
         'views/pf_beneficiarios_view.xml',
+        'views/pf_sucursal_views.xml',
+        
     ],
     # only loaded in demonstration mode
     'demo': [
