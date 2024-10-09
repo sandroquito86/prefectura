@@ -7,12 +7,15 @@ class PfEmployee(models.Model):
     _inherit = 'hr.employee'
 
     if_autoridad = fields.Boolean(string='Es Autoridad', default=False)
-
+    
+    # Name fields
     nombre = fields.Char(string="Nombre", compute="_compute_name", store=True, readonly=True)
     apellido_paterno = fields.Char(string='Apellido Paterno')
     apellido_materno = fields.Char(string='Apellido Materno')
     primer_nombre = fields.Char(string='Primer Nombre')
-    segundo_nombre = fields.Char(string='Segundo Nombre')  
+    segundo_nombre = fields.Char(string='Segundo Nombre')
+    
+    # Other fields
     service_ids = fields.Many2many('gi.servicio', string="Servicios Asignados")
     edad = fields.Char(string="Edad", compute="_compute_edad", store=True)
     provincia_id = fields.Many2one("res.country.state", string="Provincia", domain="[('country_id', '=?', country_id)]")
@@ -35,24 +38,30 @@ class PfEmployee(models.Model):
 
     @api.model
     def create(self, vals):
-        # Asegurarse de que el campo 'nombre' tenga un valor
-        if 'nombre' not in vals or not vals['nombre']:
-            vals['nombre'] = self._get_full_name(vals)
-
+        # Compute the full name before creating the record
+        full_name = self._get_full_name(vals)
+        vals['nombre'] = full_name
+        
+        # Also set the name for the resource
+        if 'name' not in vals:
+            vals['name'] = full_name
+        
         return super(PfEmployee, self).create(vals)
 
     def write(self, vals):
-        # Actualizar el nombre si alguno de los campos relacionados cambia
-        if any(field in vals for field in ['apellido_paterno', 'apellido_materno', 'primer_nombre', 'segundo_nombre']):
-            vals['nombre'] = self._get_full_name({**self.read()[0], **vals})
+        name_fields = ['apellido_paterno', 'apellido_materno', 'primer_nombre', 'segundo_nombre']
         
-        result = super(PfEmployee, self).write(vals)
+        if any(field in vals for field in name_fields):
+            # Create a temporary dictionary with updated values
+            temp_vals = dict(self.read(['apellido_paterno', 'apellido_materno', 'primer_nombre', 'segundo_nombre'])[0])
+            temp_vals.update({k: vals[k] for k in name_fields if k in vals})
+            
+            # Compute the new full name
+            full_name = self._get_full_name(temp_vals)
+            vals['nombre'] = full_name
+            vals['name'] = full_name  # This will update the related resource name
         
-        # Actualizar el nombre en el recurso asociado
-        if 'nombre' in vals and self.resource_id:
-            self.resource_id.write({'name': vals['nombre']})
-        
-        return result
+        return super(PfEmployee, self).write(vals)
 
     def _get_full_name(self, record):
         """
@@ -78,9 +87,11 @@ class PfEmployee(models.Model):
     @api.depends('apellido_paterno', 'apellido_materno', 'primer_nombre', 'segundo_nombre')
     def _compute_name(self):
         for record in self:
-            record.nombre = self._get_full_name(record)
+            full_name = self._get_full_name(record)
+            record.nombre = full_name
+            record.name = full_name  # This updates the name in hr.employee
             if record.resource_id:
-                record.resource_id.name = record.nombre
+                record.resource_id.name = full_name  # This updates the name in resource.resource
 
     @api.constrains('nombre', 'apellido_paterno', 'apellido_materno', 'primer_nombre', 'segundo_nombre')
     def _check_name_not_empty(self):

@@ -40,7 +40,7 @@ class AsignarServicio(models.Model):
     mostrar_boton_publicar = fields.Boolean(string='Mostrar Botón Publicar', compute='_compute_mostrar_boton_publicar')
     mostrar_bot_retirar_public = fields.Boolean(string='Mostrar Botón Retirar Publicar', compute='_compute_mostrar_bot_retirar_public')
 
-    _sql_constraints = [('name_unique', 'UNIQUE(name)', "El servicio no puede estar duplicado en el mismo programa.")]  
+    # _sql_constraints = [('name_unique', 'UNIQUE(name)', "El servicio no puede estar duplicado en el mismo programa.")]  
 
     @api.depends('active', 'if_publicado')
     def _compute_mostrar_boton_publicar(self):
