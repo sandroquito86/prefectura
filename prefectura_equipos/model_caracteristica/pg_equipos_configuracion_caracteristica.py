@@ -36,12 +36,13 @@ class Caracteristicas(models.Model):
     @api.depends('caracteristica_id')
     def _compute_caracteristica_id_domain(self):
       for record in self:     
-        record.caracteristica_id_domain = "as"
-        
-        # if(record.config_caracteristica_activo_id):
-        #   todas_caracteristicas = self.env['pg_equipos.catalogo_caracteristica'].search([('grupo_id','=',record.config_caracteristica_activo_id.grupo_id.id)])         
-        #   caracteristicas_ingresadas = record.config_caracteristica_activo_id.caracteristica_ids.caracteristica_id 
-        #   restantes = todas_caracteristicas - caracteristicas_ingresadas   
-        #   record.caracteristica_id_domain = json.dumps([('id' , 'in' , restantes.ids)])
-
+        record.caracteristica_id_domain = "[('id', '=', False)]"    
+        if(record.config_caracteristica_activo_id):
+            todas_caracteristicas = self.env['pg_equipos.catalogo_caracteristica'].search([])         
+            caracteristicas_ingresadas = record.config_caracteristica_activo_id.caracteristica_ids.caracteristica_id 
+            restantes = todas_caracteristicas - caracteristicas_ingresadas   
+            record.domain_personal_id = [('id', 'in', restantes.ids)]
+            
+            
+      
   

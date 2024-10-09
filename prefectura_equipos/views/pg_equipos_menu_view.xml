@@ -2,7 +2,7 @@
     <data>
 
         <menuitem name="Equipos" id="pg_equipos_menu_root" web_icon="prefectura_equipos,static/description/activo-fijo.png" sequence="10"/>
-        <menuitem name="Registro Equipos" id="pg_equipos_equipos" parent="pg_equipos_menu_root" groups="grupo_equipos_cliente" sequence="10"/>
+        <menuitem name="Registro" id="pg_equipos_equipos" parent="pg_equipos_menu_root" groups="grupo_equipos_cliente" sequence="10"/>
 
         <menuitem name="Configuración" id="pg_equipos_configuracion" parent="pg_equipos_menu_root" groups="grupo_equipos_administrador_general" sequence="30"/>
         <menuitem name="Catálogos" id="menu_configuracion_catalogo" parent="pg_equipos_configuracion" sequence="10"/>

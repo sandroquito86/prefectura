@@ -30,13 +30,7 @@ class Area(models.Model):
     def _onchange_field(self):
         pass
         # raise UserError("Este es un mensaje de error personalizado para el usuario.")
-    
-    
-    
-    
-    
-   
-    
+        
     @api.depends('name')
     def _compute_author_domain_field(self):
         for record in self:

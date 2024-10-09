@@ -14,6 +14,8 @@ access_gi_detalle_horarios,gi.detalle_horarios,model_gi_detalle_horarios,,1,1,1,
 access_gi_generar_turnos,gi.generar_turnos,model_gi_generar_turnos,,1,1,1,1
 access_gi_generarhorarios,gi.generarhorarios,model_gi_generarhorarios,,1,1,1,1
 
+access_gi_solicitud_beneficiario,gi.solicitud_beneficiario,model_gi_solicitud_beneficiario,,1,1,1,1
+
 
 
 

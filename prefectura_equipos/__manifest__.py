@@ -22,7 +22,7 @@
 
     # any module necessary for this one to work correctly
     #'depends': ['base','asset','th_gestion_hr'],
-    'depends': ['base','web','mail'],    
+    'depends': ['base','web','mail','crnd_web_field_domain','hr'],    
     'demo': [],
 
     # always loaded
@@ -62,8 +62,8 @@
   
                      
     # # vistas de activos               
-    #     'views/activos/asset_asset_view.xml',
-    #     'views/activos/asset_asset_mis_activos_view.xml',   
+        'views/equipos/pg_equipos_mis_equipos_view.xml',
+        'views/equipos/pg_equipos_equipos_view.xml',   
     #     'views/board_views.xml',    
 
     # # Operaciones              
