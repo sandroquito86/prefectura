@@ -23,6 +23,8 @@ class AsignarServicio(models.Model):
     count_responsables = fields.Integer(compute="_compute_count_responsables", string="")
     personal_ids = fields.Many2many(string='Empleados Responsables', comodel_name='hr.employee', relation='mz_asignacion_servicio_items_employee_rel', 
                                       column1='asignacion_servicio_id', column2='empleado_id')
+                                      
+                             #borrar comentario
     
     # servicio_domain_id = fields.Char(string='Domain Servicios',compute='_compute_author_domain_field')
     
