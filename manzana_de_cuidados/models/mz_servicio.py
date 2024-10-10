@@ -5,7 +5,7 @@ from odoo import models, fields, api
 
 class Servicio(models.Model):
     _name = 'mz.servicio'
-    _description = 'Servicio/Curso'
+    _description = 'Solicitudesde Beneficiarios'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _order = 'name'
 

@@ -32,11 +32,11 @@
                             </group>
                             <group>
                                 <field name="personal_id"  options="{'no_create': True, 'no_open': True, 'no_create_edit': True, 'domain_field': 'domain_personal_id'}" />
-                                <field name="domain_personal_id" />
+                                <field name="domain_personal_id" invisible="1"/>
                                 
                             </group>
                             <field name="detalle_horario_ids">
-                                <tree editable="top">
+                                <tree editable="bottom">
                                     <field name="dias" />
                                     <field name="horainicio" widget="float_time"/>
                                     <field name="horafin" widget="float_time" />

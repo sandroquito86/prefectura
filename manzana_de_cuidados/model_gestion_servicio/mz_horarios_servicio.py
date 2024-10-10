@@ -33,7 +33,7 @@ class AsignacionHorarios(models.Model):
                 record.name = 'Horario de Servicio'
 
 
-    _sql_constraints = [('name_unique', 'UNIQUE(servicio_id,personal_id)', "Ya existe una persona con este servicio.")]    
+    _sql_constraints = [('name_unique', 'UNIQUE(servicio_id,personal_id)', "Ya existe un horario para esta persona, en este servicio.")]    
 
     @api.depends('servicio_id')
     def _compute_author_domain_field(self):

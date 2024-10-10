@@ -19,10 +19,11 @@ class AsignarServicio(models.Model):
     name = fields.Char(string='Nombre', required=True, compute='_compute_name', store=True)
     servicio_id = fields.Many2one(string='Servicio', comodel_name='mz.items', ondelete='restrict',domain=_get_tipo_servicios_domain)  
     image = fields.Binary(string='Imagen', attachment=True) 
-    active = fields.Boolean(default=False, string='Activo')
+    active = fields.Boolean(default=True, string='Activo')
     count_responsables = fields.Integer(compute="_compute_count_responsables", string="")
     personal_ids = fields.Many2many(string='Empleados Responsables', comodel_name='hr.employee', relation='mz_asignacion_servicio_items_employee_rel', 
                                       column1='asignacion_servicio_id', column2='empleado_id')
+    domain_personal_ids = fields.Char(string='Domain Personal',compute='_compute_domain_personal_ids')
                                       
                              #borrar comentario
     
@@ -40,7 +41,16 @@ class AsignarServicio(models.Model):
     mostrar_boton_publicar = fields.Boolean(string='Mostrar Botón Publicar', compute='_compute_mostrar_boton_publicar')
     mostrar_bot_retirar_public = fields.Boolean(string='Mostrar Botón Retirar Publicar', compute='_compute_mostrar_bot_retirar_public')
 
-    # _sql_constraints = [('name_unique', 'UNIQUE(name)', "El servicio no puede estar duplicado en el mismo programa.")]  
+    _sql_constraints = [('name_unique', 'UNIQUE(name)', "El servicio no puede estar duplicado en el mismo programa.")]  
+
+    @api.depends('programa_id')
+    def _compute_domain_personal_ids(self):
+        for record in self:
+            if record.programa_id:
+                employees = self.env['hr.employee'].search([('sucursal_id', '=', [self.programa_id.sucursal_id.id])])
+                record.domain_personal_ids = [('id', 'in', employees.ids)]
+            else:
+                record.domain_personal_ids = [('id', 'in', [])]
 
     @api.depends('active', 'if_publicado')
     def _compute_mostrar_boton_publicar(self):
@@ -85,7 +95,7 @@ class AsignarServicio(models.Model):
     @api.depends('servicio_id')
     def _compute_domain_programas(self):
         for record in self:
-            programas = self.env['pf.programas'].search([('modulo_id', '=', self.env.ref('prefectura_base.modulo_2').id)]).mapped('modulo_id')
+            programas = self.env['pf.programas'].search([('modulo_id', '=', self.env.ref('prefectura_base.modulo_2').id)])
             if programas:
                 record.domain_programa_id = [('id', 'in', programas.ids)]
             else:
@@ -125,11 +135,19 @@ class Pf_programas(models.Model):
     _description = 'Programas'
 
     servicio_ids = fields.One2many('mz.asignacion.servicio', 'programa_id', string='Servicios')
-    model_count_mz = fields.Integer(compute="_compute_model_count_mz", string="", store=True)
+    model_count_mz = fields.Integer(compute="_compute_model_count_mz", string="")
 
     mostrar_boton_publicar = fields.Boolean(string='Mostrar Botón Publicar', compute='_compute_mostrar_boton_publicar')
     mostrar_bot_retirar_public = fields.Boolean(string='Mostrar Botón Retirar Publicar', compute='_compute_mostrar_bot_retirar_public')
+    servicios_text = fields.Char(string='Servicios Texto', compute='_compute_servicio_text')
 
+    @api.depends('model_count_mz')
+    def _compute_servicio_text(self):
+        for record in self:
+            if record.model_count_mz == 1:
+                record.servicios_text = "1 Servicio"
+            else:
+                record.servicios_text = f"{record.model_count_mz} Servicios"
 
     @api.depends('active', 'if_publicado')
     def _compute_mostrar_boton_publicar(self):

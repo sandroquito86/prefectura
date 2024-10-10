@@ -31,6 +31,10 @@ class GenerarHorarios(models.Model):
     turno_disponibles_ids = fields.One2many(string='', comodel_name='mz.planificacion.servicio', inverse_name='generar_horario_id',)
     domain_personal_id = fields.Char(string='Domain Personal',compute='_compute_author_domain_field') 
 
+    programa_id = fields.Many2one('pf.programas', string='Programa',store=True
+                                  )
+
+
     @api.depends('servicio_id')
     def _compute_author_domain_field(self):
         for record in self:
@@ -80,6 +84,21 @@ class GenerarHorarios(models.Model):
             if anio_actual > record.anio:
                 raise ValidationError("El año a generar no puede ser menor al año actual!!")
 
+    @api.onchange('servicio_id')
+    def _onchange_servicio_id(self):
+        for record in self:
+            record.personal_id = False
+            record.mes_genera = False
+            record.anio = False
+            record.turno_disponibles_ids = False
+            record.programa_id = record.servicio_id.programa_id.id
+
+    @api.onchange('personal_id')
+    def _onchange_personal_id(self):
+        for record in self:
+            record.mes_genera = False
+            record.anio = False
+            record.turno_disponibles_ids = False
             
     def obtener_dias_del_mes(self, mes, anio):
         # Abril, junio, septiembre y noviembre tienen 30

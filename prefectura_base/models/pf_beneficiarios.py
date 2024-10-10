@@ -10,7 +10,7 @@ class Beneficiarios(models.Model):
     _description = 'Beneficiarios'
 
     
-    name = fields.Char(string="Nombre del Beneficiario", compute="_compute_name", store=True)
+    name = fields.Char(string="Nombre del Beneficiario", compute="_compute_name", store=True, default="Nombre del Beneficiario")
     image = fields.Image(string="Imagen del Beneficio")  # Campo para la imagen
     category_ids = fields.Many2many('pf.categoria_beneficario', 'gi_beneficiario_categoria_rel', 'beneficiario_id', 'categoria_id', 
                                     string='Categorías')  
@@ -30,6 +30,7 @@ class Beneficiarios(models.Model):
         string="Módulos",
         help="Selecciona los módulos a los que pertenece este beneficiario"
     )
+    programa_ids = fields.Many2many('pf.programas', string='Programas',)
     
     @api.depends('apellido_paterno', 'apellido_materno', 'primer_nombre', 'segundo_nombre')
     def _compute_name(self):

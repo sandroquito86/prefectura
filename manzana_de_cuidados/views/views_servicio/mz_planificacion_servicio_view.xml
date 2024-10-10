@@ -10,6 +10,7 @@
           <field name="personal_id" />
           <field name="mes_genera" />
           <field name="anio"/>
+          <field name="programa_id" invisible="1" /> 
         </tree>
       </field>
     </record>
@@ -36,6 +37,7 @@
                 <field name="maximo_beneficiarios" readonly = "not personal_id"  />
                 <field name="anio" readonly = "not personal_id"  />
                 <field name="mes_genera" readonly = "not personal_id" />
+                <field name="programa_id" invisible="1" /> 
               </group>
             </group>
             <field name="turno_disponibles_ids">
@@ -69,13 +71,20 @@
           <search>
               <!-- Filtro para buscar por Personal -->
               <field name="personal_id"/>
+              <field name="servicio_id"/>
+              <field name="servicio_id" invisible="1"/>
               
               <!-- Agrupamientos -->
               <group expand="1" string="Agrupar por">
                   <filter name="group_by_servicio" string="Servicio" context="{'group_by': 'servicio_id'}"/>
-                  <filter name="group_by_mes" string="Mes" context="{'group_by': 'mes_genera'}"/>
                   <filter name="group_by_anio" string="Año" context="{'group_by': 'anio'}"/>
+                  <filter name="group_by_mes" string="Mes" context="{'group_by': 'mes_genera'}"/>
               </group>
+              <searchpanel>
+                    <field name="programa_id" icon="fa-building" string="Programa"/>
+                    <field name="servicio_id" icon="fa-headphones" string="Servicio"/>
+                    <field name="personal_id" icon="fa-users" string="Persona" select="multi" hierarchize="false"/>
+                </searchpanel>
           </search>
       </field>
   </record>
@@ -84,8 +93,9 @@
      <field name="name">Planificación de Horarios de Servicios</field>
       <field name="res_model">mz.genera.planificacion.servicio</field>
       <field name="view_mode">tree,form</field>
+      <field name="context">{'default_group_by': ['anio', 'mes_genera']}</field>
     </record>
 
-    <menuitem name="Planificación de Horarios de SErvicios" id="menu_action_mz_genera_planificacion_servicio" parent="menu_servicio_curso" action="action_mz_genera_planificacion_servicio" sequence="40" />
+    <menuitem name="Planificación de Horarios de Servicios" id="menu_action_mz_genera_planificacion_servicio" parent="menu_servicio_curso" action="action_mz_genera_planificacion_servicio" sequence="40" />
   </data>
 </odoo>

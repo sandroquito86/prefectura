@@ -142,8 +142,11 @@
                                 <div>
                                     <span class="fa fa-phone"/> <field name="phone"/>
                                 </div>
-                                <div>
+                                <!-- <div>
                                     <field name="model_count_mz"/> SERVICIOS
+                                </div> -->
+                                <div>
+                                    <span class="fa fa-headset"/> <field name="model_count_mz" invisible="1"/> <field name="servicios_text"/> 
                                 </div>
                             </div>
                         </div>

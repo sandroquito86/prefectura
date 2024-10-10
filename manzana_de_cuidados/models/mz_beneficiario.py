@@ -25,6 +25,7 @@ class Beneficiario(models.Model):
     aprobado = fields.Boolean(string='Aprobado', default=False, tracking=True)
     company_id = fields.Many2one('res.company', string='Compañía', required=True, default=lambda self: self.env.company)
     
+    
     state = fields.Selection([
         ('borrador', 'Borrador'),
         ('por_aprobar', 'Por Aprobar'),

@@ -58,11 +58,11 @@
 
     <!-- Acción para Servicios/Cursos -->
     <record id="action_servicio" model="ir.actions.act_window">
-        <field name="name">Servicios/Cursos</field>
+        <field name="name">Solicitudes</field>
         <field name="res_model">mz.servicio</field>
         <field name="view_mode">tree,form</field>
     </record>
 
     <!-- Menú para Servicios/Cursos -->
-    <menuitem id="menu_servicio" name="Servicios/Cursos" parent="menu_beneficiario" action="action_servicio" sequence="20"/>
+    <menuitem id="menu_servicio" name="Solicitudes" parent="menu_beneficiario" action="action_servicio" sequence="20"/>
 </odoo>
