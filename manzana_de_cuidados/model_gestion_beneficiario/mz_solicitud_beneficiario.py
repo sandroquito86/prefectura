@@ -33,7 +33,7 @@ class MzSolicitudBeneficiario(models.Model):
         ('rejected', 'Rechazado')
     ], string='Estado', default='draft', required=True)
 
-    program_id = fields.Many2one('pf.programas', string='Programa', required=True)
+    programa_id = fields.Many2one('pf.programas', string='Programa', required=True)
 
     @api.depends('apellido_paterno', 'apellido_materno', 'primer_nombre', 'segundo_nombre')
     def _compute_name(self):
