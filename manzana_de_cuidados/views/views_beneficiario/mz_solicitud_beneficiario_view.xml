@@ -23,11 +23,11 @@
                 <form string="Solicitud de Beneficiario" create="true" delete="true" edit="true">
                     <header>
                         <button name="action_submit" type="object" string="Enviar" class="btn-primary"
-                                modifiers="{'invisible': [('state', '!=', 'draft')]}"/>
+                                invisible="state != 'draft'"/>
                         <button name="action_approve" type="object" string="Aprobar" class="btn-success"
-                                modifiers="{'invisible': [('state', '!=', 'submitted')]}"/>
+                                invisible="state != 'submitted'"/>
                         <button name="action_reject" type="object" string="Rechazar" class="btn-danger"
-                                modifiers="{'invisible': [('state', '!=', 'submitted')]}"/>
+                                invisible="state != 'submitted'"/>
                         <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,rejected"/>
                     </header>
                     <sheet>
@@ -50,13 +50,21 @@
                             <group string="Lugar y Fecha de Nacimiento">
                                 <field name="fecha_nacimiento"/>
                                 <field name="edad"/>
+                                <field name="pais_id"/>
+                                <field name="provincia_id" readonly="not pais_id"/>
+                                <field name="ciudad_id"  readonly="not provincia_id"/>
                                 <field name="direccion"/>
                             </group>
                             <group string="Datos de Contacto">
                             <field name="telefono"/>
                             <field name="email"/>
+                            <field name="programa_id" options="{'no_create': True, 'no_open': True, 'no_create_edit': True}"/>
                             </group>
                         </group>
+                        <div class="oe_chatter">
+                            <field name="message_follower_ids" widget="mail_followers" />
+                            <field name="message_ids" widget="mail_thread" />
+                        </div>
                     </sheet>
                 </form>
             </field>
@@ -78,6 +86,10 @@
                     <filter string="Enviado" name="submitted" domain="[('state','=','submitted')]"/>
                     <filter string="Aprobado" name="approved" domain="[('state','=','approved')]"/>
                     <filter string="Rechazado" name="rejected" domain="[('state','=','rejected')]"/>
+                <searchpanel>
+                    <field name="state" icon="ffa-check" string="Estado"/>
+                    <field name="programa_id" icon="fa-building" string="Programa"/>
+                </searchpanel>
                 </search>
             </field>
         </record>

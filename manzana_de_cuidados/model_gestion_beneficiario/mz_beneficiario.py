@@ -12,32 +12,12 @@ class Beneficiario(models.Model):
     _inherit = ['mail.thread', 'mail.activity.mixin']
 
     beneficiario_id = fields.Many2one('pf.beneficiario', string="Beneficiario", required=True, ondelete="cascade")
-    tipo_documento = fields.Selection([
-        ('dni', 'DNI'),
-        ('pasaporte', 'Pasaporte'),
-        ('carnet_extranjeria', 'Carnet de Extranjería')
-    ], string='Tipo de Documento', required=True, tracking=True)
-    numero_documento = fields.Char(string='Número de Documento', required=True, tracking=True)
-    direccion = fields.Char(string='Dirección', tracking=True)
-    telefono = fields.Char(string='Teléfono', tracking=True)
-    email = fields.Char(string='Correo Electrónico', tracking=True)
     dependientes_ids = fields.One2many('mz.dependiente', 'beneficiario_id', string='Dependientes')
-    aprobado = fields.Boolean(string='Aprobado', default=False, tracking=True)
     company_id = fields.Many2one('res.company', string='Compañía', required=True, default=lambda self: self.env.company)
     programa_id = fields.Many2one('pf.programas', string='Programa', required=True)
     
-    
-    state = fields.Selection([
-        ('borrador', 'Borrador'),
-        ('por_aprobar', 'Por Aprobar'),
-        ('aprobada', 'Aprobada'),
-        ('rechazada', 'Rechazada')
-    ], string='Estado', default='borrador', required=True)
 
-    @api.onchange('cedula', 'tipo_documento', 'fecha_nacimiento')
-    def _onchange_cedula(self):
-        if self.numero_documento:
-            self.cedula = self.numero_documento
+    
 
     @api.onchange('email')
     def _onchange_email(self):
@@ -78,47 +58,59 @@ class Beneficiario(models.Model):
                 if not utils.validar_cedula(record.numero_documento):
                     raise ValidationError("El número de cédula ingresado no es válido.")
                 
-    # @api.model
-    # def create(self, vals):
-    #     # Crear el beneficiario normalmente
-    #     beneficiario = super(Beneficiario, self).create(vals)
+    @api.model
+    def create(self, vals):
+        # Buscar si ya existe un beneficiario con el mismo número de documento
+        numero_documento = vals.get('numero_documento')
+        tipo_documento = vals.get('tipo_documento')
+        
+        if numero_documento and tipo_documento:
+            existing_beneficiario = self.env['pf.beneficiario'].search([
+                ('numero_documento', '=', numero_documento),
+                ('tipo_documento', '=', tipo_documento)
+            ], limit=1)
+            
+            if existing_beneficiario:
+                # Si existe, usamos ese beneficiario en lugar de crear uno nuevo
+                vals['beneficiario_id'] = existing_beneficiario.id
+                # Actualizamos los campos del beneficiario existente
+                existing_beneficiario.write({'programa_ids': [(4, vals['programa_id'])]})
+            else:
+                # Si no existe, creamos un nuevo beneficiario
+                new_beneficiario = self.env['pf.beneficiario'].create({
+                    k: v for k, v in vals.items() if k in self.env['pf.beneficiario']._fields
+                })
+                new_beneficiario.write({'programa_ids': [(4, vals['programa_id'])]})
+                vals['beneficiario_id'] = new_beneficiario.id
 
-    #     # Verificar si el usuario ya está creado, si no lo está, crear uno nuevo
-    #     if not beneficiario.user_id:
-    #         # Crear el usuario en el sistema
-    #         user_vals = {
-    #             'name': beneficiario.name,
-    #             'login': beneficiario.email,
-    #             'email': beneficiario.email,
-    #             'company_id': beneficiario.company_id.id,
-    #             'company_ids': [(4, beneficiario.company_id.id)],
-    #             # al crear el usuario debes asignarle los grupos bases  que por defecto debe tener el beneficiario 
-    #             # 'groups_id': [(6, 0, [self.env.ref('module_name.group_portal').id])]  # Asignar el grupo adecuado, como eLearning portal
-    #         }
-    #         user = self.env['res.users'].create(user_vals)
-    #         beneficiario.user_id = user.id
+        return super(Beneficiario, self).create(vals)
 
-        # return beneficiario
+    @api.constrains('numero_documento', 'tipo_documento')
+    def _check_unique_documento(self):
+        for record in self:
+            existing = self.search([
+                ('numero_documento', '=', record.numero_documento),
+                ('tipo_documento', '=', record.tipo_documento),
+                ('id', '!=', record.id)
+            ])
+            if existing:
+                raise ValidationError("Ya existe un beneficiario con este número y tipo de documento.")
     
-    def action_por_aprobar(self):
-        self.state = 'por_aprobar'
 
-    def action_aprobada(self):
+    def crear_user(self):
         user_vals = {
             'name': self.name,
             'login': self.email,
             'email': self.email,
             'company_id': self.company_id.id,
             'company_ids': [(4, self.company_id.id)],
-            'password': self.cedula,
+            'password': self.numero_documento,
             # 'groups_id': [(6, 0, [self.env.ref('prefectura_base.group_portal').id])]
         }
         user = self.env['res.users'].create(user_vals)
         self.user_id = user.id
-        self.state = 'aprobada'
     
-    def action_rechazada(self):
-        self.state = 'rechazada'
+
     
 
     

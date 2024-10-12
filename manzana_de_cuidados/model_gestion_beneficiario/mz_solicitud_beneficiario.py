@@ -24,7 +24,12 @@ class MzSolicitudBeneficiario(models.Model):
     numero_documento = fields.Char(string='Número de Documento', required=True, tracking=True)
     fecha_nacimiento = fields.Date(string='Fecha de Nacimiento', required=True, tracking=True)
     direccion = fields.Char(string='Dirección')
-    telefono = fields.Char(string='Teléfono')
+    pais_id = fields.Many2one('res.country', string='Pais', ondelete='restrict')
+    provincia_id = fields.Many2one("res.country.state", string='Provincia', ondelete='restrict', 
+                                   domain="[('country_id', '=?', pais_id)]")
+    ciudad_id = fields.Many2one('res.country.ciudad', string='Ciudad' , ondelete='restrict', 
+                                   domain="[('state_id', '=?', provincia_id)]")
+    telefono = fields.Char(string='Teléfono', required=True, tracking=True)
     email = fields.Char(string='Email', required=True, tracking=True)
     state = fields.Selection([
         ('draft', 'Borrador'),
@@ -73,7 +78,7 @@ class MzSolicitudBeneficiario(models.Model):
 
     def action_approve(self):
         self.state = 'approved'
-        self.env['mz.beneficiario'].create({
+        beneficiario = self.env['mz.beneficiario'].create({
             'name': self.name,
             'apellido_paterno': self.apellido_paterno,
             'apellido_materno': self.apellido_materno,
@@ -85,7 +90,12 @@ class MzSolicitudBeneficiario(models.Model):
             'direccion': self.direccion,
             'telefono': self.telefono,
             'email': self.email,
+            'programa_id' : self.programa_id.id,
+            'pais_id': self.pais_id.id,
+            'provincia_id': self.provincia_id.id,
+            'ciudad_id': self.ciudad_id.id
         })
+        beneficiario.crear_user()
 
 
     def action_reject(self):

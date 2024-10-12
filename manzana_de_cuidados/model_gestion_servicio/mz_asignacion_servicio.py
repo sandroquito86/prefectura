@@ -10,6 +10,7 @@ class AsignarServicio(models.Model):
     _name = 'mz.asignacion.servicio'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _description = 'Asignación de Servicios' 
+    _rec_name = 'servicio_id'
 
     @api.model
     def _get_tipo_servicios_domain(self):

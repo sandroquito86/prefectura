@@ -19,14 +19,29 @@ class Beneficiarios(models.Model):
     primer_nombre = fields.Char(string='Primer Nombre')
     segundo_nombre = fields.Char(string='Segundo Nombre')   
     fecha_nacimiento = fields.Date(string="Fecha de Nacimiento") 
-    edad = fields.Char(string="Edad", compute="_compute_edad")
-    cedula = fields.Char(string='Cédula de Identidad') 
+    edad = fields.Char(string="Edad", compute="_compute_edad") 
     pais_id = fields.Many2one('res.country', string='Pais', ondelete='restrict')
     provincia_id = fields.Many2one("res.country.state", string='Provincia', ondelete='restrict', 
                                    domain="[('country_id', '=?', pais_id)]")
+    ciudad_id = fields.Many2one('res.country.ciudad', string='Ciudad' , ondelete='restrict', 
+                                   domain="[('state_id', '=?', provincia_id)]")
     user_id = fields.Many2one('res.users', string="Usuario", help="Usuario asociado para acceder al sistema")
     
     programa_ids = fields.Many2many('pf.programas', string='Programas',)
+    tipo_documento = fields.Selection([
+        ('dni', 'DNI'),
+        ('pasaporte', 'Pasaporte'),
+        ('carnet_extranjeria', 'Carnet de Extranjería')
+    ], string='Tipo de Documento', required=True, tracking=True)
+    numero_documento = fields.Char(string='Número de Documento', required=True, tracking=True)
+    direccion = fields.Char(string='Dirección', tracking=True)
+    telefono = fields.Char(string='Teléfono', tracking=True)
+    email = fields.Char(string='Correo Electrónico', tracking=True)
+    genero = fields.Selection([
+        ('masculino', 'Masculino'),
+        ('femenino', 'Femenino'),
+        ('otro', 'Otro')
+    ], string='Género')
     
     @api.depends('apellido_paterno', 'apellido_materno', 'primer_nombre', 'segundo_nombre')
     def _compute_name(self):
