@@ -24,7 +24,7 @@ class Beneficiario(models.Model):
     dependientes_ids = fields.One2many('mz.dependiente', 'beneficiario_id', string='Dependientes')
     aprobado = fields.Boolean(string='Aprobado', default=False, tracking=True)
     company_id = fields.Many2one('res.company', string='Compañía', required=True, default=lambda self: self.env.company)
-    programa_id = fields.Many2one('mz.programa', string='Programa', required=True)
+    program_id = fields.Many2one('pf.programas', string='Programa', required=True)
     
     
     state = fields.Selection([
