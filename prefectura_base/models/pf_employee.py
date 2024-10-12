@@ -1,4 +1,4 @@
-from odoo import models, fields, api
+from odoo import models, fields, api, _
 from odoo.exceptions import ValidationError
 from datetime import date
 from dateutil.relativedelta import relativedelta
@@ -20,11 +20,19 @@ class PfEmployee(models.Model):
     edad = fields.Char(string="Edad", compute="_compute_edad", store=True)
     provincia_id = fields.Many2one("res.country.state", string="Provincia", domain="[('country_id', '=?', country_id)]")
     sucursal_id = fields.Many2one('pf.sucursal', string='Sucursal', required=True)
-    modulo_ids = fields.Many2many(
-        'pf.modulo', 
-        string="Módulos",
-        help="Selecciona los módulos a los que pertenece este beneficiario"
-    )
+    programa_id = fields.Many2one('pf.programas', string='Programa', required=True)
+    modulo_ids = fields.Many2many('pf.modulo', string="Módulos", help="Selecciona los módulos a los que pertenece este beneficiario")
+
+    @api.constrains('user_id')
+    def _check_unique_user(self):
+        for employee in self:
+            if employee.user_id:
+                other_employee = self.search([
+                    ('user_id', '=', employee.user_id.id),
+                    ('id', '!=', employee.id)
+                ])
+                if other_employee:
+                    raise ValidationError(_("El usuario %s ya está relacionado con un empleado.") % employee.user_id.name)
 
     @api.depends('birthday')
     def _compute_edad(self):
@@ -37,37 +45,35 @@ class PfEmployee(models.Model):
                 record.edad = "Sin fecha de nacimiento"
 
     @api.model
-    def create(self, vals):
-        # Compute the full name before creating the record
+    def create(self, vals):        
         full_name = self._get_full_name(vals)
-        vals['nombre'] = full_name
-        
-        # Also set the name for the resource
+        vals['nombre'] = full_name     
         if 'name' not in vals:
-            vals['name'] = full_name
-        
-        return super(PfEmployee, self).create(vals)
+            vals['name'] = full_name        
+        employees = super(PfEmployee, self).create(vals)
+        for employee in employees:
+            if employee.user_id and employee.programa_id:
+                employee.user_id.sudo().write({'programa_id': employee.programa_id.id})
+        return employees
 
     def write(self, vals):
-        name_fields = ['apellido_paterno', 'apellido_materno', 'primer_nombre', 'segundo_nombre']
-        
+        name_fields = ['apellido_paterno', 'apellido_materno', 'primer_nombre', 'segundo_nombre']        
         if any(field in vals for field in name_fields):
-            # Create a temporary dictionary with updated values
             temp_vals = dict(self.read(['apellido_paterno', 'apellido_materno', 'primer_nombre', 'segundo_nombre'])[0])
             temp_vals.update({k: vals[k] for k in name_fields if k in vals})
             
-            # Compute the new full name
             full_name = self._get_full_name(temp_vals)
             vals['nombre'] = full_name
-            vals['name'] = full_name  # This will update the related resource name
+            vals['name'] = full_name
         
-        return super(PfEmployee, self).write(vals)
+        res = super(PfEmployee, self).write(vals)
+        if 'user_id' in vals or 'programa_id' in vals:
+            for employee in self:
+                if employee.user_id and employee.programa_id:
+                    employee.user_id.sudo().write({'programa_id': employee.programa_id.id})
+        return res
 
     def _get_full_name(self, record):
-        """
-        Construye el nombre completo basado en los campos individuales.
-        Retorna una cadena vacía si no hay datos.
-        """
         if isinstance(record, dict):
             nombres = filter(None, [
                 record.get('apellido_paterno', ''),
@@ -89,9 +95,9 @@ class PfEmployee(models.Model):
         for record in self:
             full_name = self._get_full_name(record)
             record.nombre = full_name
-            record.name = full_name  # This updates the name in hr.employee
+            record.name = full_name
             if record.resource_id:
-                record.resource_id.name = full_name  # This updates the name in resource.resource
+                record.resource_id.name = full_name
 
     @api.constrains('nombre', 'apellido_paterno', 'apellido_materno', 'primer_nombre', 'segundo_nombre')
     def _check_name_not_empty(self):

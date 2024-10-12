@@ -39,8 +39,7 @@
                                         <div class="o_kanban_record_headings">
                                             <strong class="o_kanban_record_title">
                                                 <field name="name" placeholder="Employee's Name"/>
-                                                <div class="float-end">
-                                                    <div t-if="record.show_hr_icon_display.raw_value">
+                                                <div class <field name="name" />-if="record.show_hr_icon_display.raw_value">
                                                         <field name="hr_icon_display" class="o_employee_availability" widget="hr_presence_status" />
                                                     </div>
                                                 </div>

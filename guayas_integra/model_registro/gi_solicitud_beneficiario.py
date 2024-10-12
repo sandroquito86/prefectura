@@ -37,8 +37,7 @@ class SolicitudBeneficiario(models.Model):
                                    string='Carnet de Discapacidad',required=True)
     porcentaje_discapacidad = fields.Float(string='Descuento (%)', digits=(16, 2), default=0.0,required=True)    
     tipo_discapacidad_id = fields.Many2one(string='Tipo de discapacidad', comodel_name='pf.tipo_discapacidad', ondelete='restrict',required=True)
-    grado_id = fields.Many2one(string='Grado', comodel_name='pf.items', ondelete='restrict',
-                                       domain=lambda self: [('catalogo_id', '=', self.env.ref('prefectura_base.pf_catalogo_grado').id)], required=True)    
+    
     diagnostico = fields.Text(string='Diagnóstico',required=True)
     
     servicio_ids = fields.Many2many(string='Servicios', comodel_name='gi.servicio', relation='gi_solicitud_beneficiario_servicios_rel',

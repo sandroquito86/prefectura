@@ -34,6 +34,7 @@ Long description of module's purpose
         'views/pf_sucursal_views.xml',
         'views/views_empleado/pf_empleado_view.xml',
     ],
+    'post_load': 'environment_extend',
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',
