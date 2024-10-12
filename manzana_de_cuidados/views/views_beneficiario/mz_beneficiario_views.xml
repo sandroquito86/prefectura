@@ -67,6 +67,7 @@
             <group string="Datos de Contacto">
               <field name="telefono"/>
               <field name="email"/>
+              <field name="programa_id" />
               <field name="user_id" readonly="1" force_save="1"/>
             </group>
           </group>

@@ -19,7 +19,7 @@ class Beneficiarios(models.Model):
     primer_nombre = fields.Char(string='Primer Nombre')
     segundo_nombre = fields.Char(string='Segundo Nombre')   
     fecha_nacimiento = fields.Date(string="Fecha de Nacimiento") 
-    edad = fields.Char(string="Edad", compute="_compute_edad", store=True)
+    edad = fields.Char(string="Edad", compute="_compute_edad")
     cedula = fields.Char(string='Cédula de Identidad') 
     pais_id = fields.Many2one('res.country', string='Pais', ondelete='restrict')
     provincia_id = fields.Many2one("res.country.state", string='Provincia', ondelete='restrict', 

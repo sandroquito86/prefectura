@@ -27,18 +27,18 @@ Long description of module's purpose
         'security/ir.model.access.csv',
         'data/data_base.xml',
         'menu/mz_menu.xml',
-        'views/mz_beneficiario_views.xml',
         'views/mz_catalogo_views.xml',
-        'views/mz_servicio_views.xml',
-        'views/mz_curso_views.xml',
         'views/mz_catalogo_items_views.xml',
         'views/mz_programas_view.xml',
-        'views/views_gestion_academica/mz_slide_channel_inherit_views.xml',
         
         'views/views_servicio/mz_asignacion_servicio_view.xml',
         'views/views_servicio/mz_horarios_servicio_view.xml',
         'views/views_servicio/mz_planificacion_servicio_view.xml',
 
+        'views/views_beneficiario/mz_solicitud_beneficiario_view.xml',
+        'views/views_beneficiario/mz_beneficiario_views.xml',
+
+        
         'views/wizard/mz_wizard_quitar_publicacion_programa.xml',
     ],
     # only loaded in demonstration mode
