@@ -24,7 +24,7 @@ class PfProgramas(models.Model):
     street2 = fields.Char(string='Calle 2', related='sucursal_id.street2')
     zip = fields.Char(string='Código Postal', related='sucursal_id.zip')
     if_publicado = fields.Boolean(string='Publicado', default=False)
-    
+    normativa_texto = fields.Html(string='Normativa', help="Descripción detallada de la normativa aplicable a este programa o sucursal.")
     
     image = fields.Binary(string='Imagen', attachment=True)
     
