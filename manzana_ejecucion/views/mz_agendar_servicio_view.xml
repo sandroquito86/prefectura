@@ -21,6 +21,12 @@
     <field name="model">mz.agendar_servicio</field>
     <field name="arch" type="xml">
       <form string="Agendar Servicio">
+        <header>
+          <button name="solicitar_horario" invisible="state != 'borrador'" type="object" string="Solicitar" class="oe_highlight"/>
+          <button name="aprobar_horario" invisible="state != 'solicitud'" type="object" string="Aprobar"/>
+          <field name="state" widget="statusbar" statusbar_visible="borrador,solicitud,aprobado"/>
+         
+        </header>
         <sheet>
           <group>
             <group>
@@ -31,8 +37,8 @@
               <field name="servicio_id"/>
               <field name="personal_id_domain" invisible="1" />
               <field name="personal_id" options="{'domain_field': 'personal_id_domain', 'no_create_edit': True, 'no_open': True,'no_create': True}"/>
-              <field name="horario_id_domain"/>
-              <field name="horario_id" options="{'domain_field': 'personal_id_domain', 'no_create_edit': True, 'no_open': True,'no_create': True}"/>
+              <field name="horario_id_domain" invisible="1"/>
+              <field name="horario_id" options="{'domain_field': 'horario_id_domain', 'no_create_edit': True, 'no_open': True,'no_create': True}"/>
             </group>
             <group></group>
           </group>

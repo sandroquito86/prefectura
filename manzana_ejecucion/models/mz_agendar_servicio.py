@@ -9,6 +9,10 @@ class AgendarServicio(models.Model):
     _description = 'Agendar Servicio'
     _inherit = ['mail.thread', 'mail.activity.mixin'] 
     
+    STATE_SELECTION = [('borrador', 'Borrador'), ('solicitud', 'Solicitado'),('aprobado', 'Aprobado'),
+                       ('atendido', 'Atendido'), ('anulado', 'Anulado')]
+
+    state = fields.Selection(STATE_SELECTION, 'Estado', readonly=True, tracking=True, default='borrador', )
     modulo_id = fields.Many2one(string='Módulo', comodel_name='pf.modulo', ondelete='restrict',
                                 default=lambda self: self.env.ref('prefectura_base.modulo_2').id,tracking=True)
     beneficiario_id_domain = fields.Char(compute="_compute_beneficiario_id_domain", readonly=True, store=False, )
@@ -21,7 +25,32 @@ class AgendarServicio(models.Model):
     horario_id_domain = fields.Char(compute="_compute_horario_id_domain", readonly=True, store=False, )
     horario_id = fields.Many2one(string='Horarios', comodel_name='mz.planificacion.servicio', ondelete='restrict')  
 
-             
+    @api.constrains('beneficiario_id', 'horario_id')
+    def _check_unique_beneficiario_horario(self):
+        for record in self:
+            existing = self.search([
+                ('beneficiario_id', '=', record.beneficiario_id.id),
+                ('horario_id', '=', record.horario_id.id),
+                ('id', '!=', record.id)
+            ])            
+            if existing:
+                raise ValidationError("El beneficiario ya ha solicitado este horario.")       
+            
+    @api.constrains('horario_id', 'beneficiario_id')
+    def _check_horario_capacity(self):
+        for record in self:
+            if record.horario_id and record.beneficiario_id:
+                # Contar las asistencias actuales para este horario
+                asistencias_count = self.env['mz.asistencia_servicio'].search_count([
+                    ('planificacion_id', '=', record.horario_id.id)
+                ])
+                
+                # Verificar si se excede la capacidad máxima
+                if asistencias_count >= record.horario_id.maximo_beneficiarios:
+                    raise ValidationError(f"El horario seleccionado ya ha alcanzado su capacidad máxima de {record.horario_id.maximo_beneficiarios} beneficiarios.")
+
+            
+                
     @api.depends('modulo_id')
     def _compute_beneficiario_id_domain(self):
       for record in self:         
@@ -38,17 +67,37 @@ class AgendarServicio(models.Model):
     @api.depends('servicio_id', 'personal_id')
     def _compute_horario_id_domain(self):
         for record in self:
-            # Buscar todos los horarios planificados para este servicio y personal
             horarios_planificados = self.env['mz.planificacion.servicio'].search([
                 ('generar_horario_id.servicio_id', '=', record.servicio_id.id),
                 ('generar_horario_id.personal_id', '=', record.personal_id.id),
+                ('beneficiarios_count', '<', 'maximo_beneficiarios')  # Usamos el campo almacenado directamente
+            ])            
+            record.horario_id_domain = [('id', 'in', horarios_planificados.ids)]
+
+
+    
+
+
+    def solicitar_horario(self):
+       for record in self:
+          record.state = 'solicitud'
+
+    def aprobar_horario(self):
+        for record in self:
+            # Verificar nuevamente la capacidad antes de aprobar
+            asistencias_count = self.env['mz.asistencia_servicio'].search_count([
+                ('planificacion_id', '=', record.horario_id.id)
             ])
-            # Filtrar los horarios que aún tienen capacidad disponible
-            horarios_disponibles = horarios_planificados.filtered(
-                lambda h: len(h.beneficiario_ids) < h.maximo_beneficiarios
-            )
+            if asistencias_count >= record.horario_id.maximo_beneficiarios:
+                raise ValidationError(f"No se puede aprobar. El horario ya ha alcanzado su capacidad máxima de {record.horario_id.maximo_beneficiarios} beneficiarios.")
             
-            # Crear el dominio con los IDs de los horarios disponibles
-            record.horario_id_domain = [('id', 'in', horarios_disponibles.ids)]
+            record.state = 'aprobado'
+            if record.horario_id and record.beneficiario_id:
+                self.env['mz.asistencia_servicio'].create({
+                    'planificacion_id': record.horario_id.id,
+                    'beneficiario_id': record.beneficiario_id.id,
+                })
+
+
        
        

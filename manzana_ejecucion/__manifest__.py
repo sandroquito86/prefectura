@@ -25,6 +25,7 @@ Long description of module's purpose
         'security/ir.model.access.csv',
         'views/mz_menu_padre_view.xml',
         'views/mz_agendar_servicio_view.xml',
+         'views/mz_asistencia_servicio.xml',        
         'views/templates.xml',
     ],
     # only loaded in demonstration mode
