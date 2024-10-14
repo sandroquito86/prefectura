@@ -42,18 +42,6 @@
                             <field name="if_publicado" readonly="1" widget="boolean_toggle"/>
                         </group>
                     </group>
-                    <group string="Referencia">
-                        <group>
-                            <field name="tipo_documento" options="{'no_create': True, 'no_open': True, 'no_create_edit': True, 'domain_field': 'domain_tipo_documento'}"/>
-                            <field name="domain_tipo_documento" invisible="1"/>
-                            <field name="numero_documento" />
-                        </group>
-                        <group>
-                            <field name="fecha_documento"/>
-                            <field name="file" filename="name_file"/>
-                            <field name="name_file" invisible="1"/>
-                        </group>
-                    </group>
                     <notebook>
                         <page string="Servicios">
                             <field name="servicio_ids" readonly="1" force_save="1">
@@ -65,6 +53,19 @@
                         <page string="Autoridades">
                             <field name="autoridades_ids" context="{'tree_view_ref': 'manzana_de_cuidados.view_autoridades_hr_employee_tree'}">
                             </field>
+                        </page>
+                        <page string="Normativa">
+                            <group>
+                                <field name="normativa_texto" widget="html"/>
+                            </group>
+                            <group>
+                                <field name="tipo_documento" options="{'no_create': True, 'no_open': True, 'no_create_edit': True, 'domain_field': 'domain_tipo_documento'}"/>
+                                <field name="domain_tipo_documento" invisible="1"/>
+                                <field name="numero_documento" />
+                                <field name="fecha_documento"/>
+                                <field name="file" filename="name_file"/>
+                                <field name="name_file" invisible="1"/>
+                            </group>
                         </page>
                     </notebook>
                     <div class="oe_chatter">

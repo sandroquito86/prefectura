@@ -6,5 +6,4 @@ from . import pf_employee
 from . import pf_beneficiarios
 from . import pf_sucursal
 from . import pf_modulos
-from . import pf_employee
 from . import pf_programa
