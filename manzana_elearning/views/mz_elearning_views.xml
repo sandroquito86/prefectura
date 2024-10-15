@@ -8,10 +8,43 @@
             <field name="inherit_id" ref="website_slides.view_slide_channel_form"/>
             <field name="arch" type="xml">
                 <xpath expr="//page[@name='karma_rules']" position="after">
-                    <page string="Asistencias" name="asistencias_mz_elearning">
+                    <page string="Asistencias" name="mz_elearning_asistencias">
                         <!-- TEMPLATE RENDERIZADO CON JS -->
                         <widget name="mze_attendance_beneficiary"/>
                     </page>
+                    <page string="Tareas" name="mz_elearning_task">
+                        <field name="assignments_ids">
+                            <tree>
+                                <field name="name" />
+                                <field name="description_task" />
+                                <field name="teacher_id" />
+                                <field name="deadline" string="Fecha de Entrega" />
+                                <field name="max_score" string="Calificación Máxima" />
+                            </tree>
+                            <form string="Tareas">
+                                <sheet>
+                                    <group>
+                                        <field name="name" />
+                                        <field name="description_task" />
+                                        <field name="teacher_id" />
+                                        <field name="deadline" string="Fecha de Entrega" />
+                                        <field name="max_score" string="Calificación Máxima" />
+                                    </group>
+                                    <field name="student_assignments_ids">
+                                        <tree editable="bottom">
+                                            <field name="name" />
+                                            <field name="student_id" />
+                                            <field name="submitted_file" widget="binary" string="Archivo Subido" />
+                                            <field name="status" />
+                                            <field name="grade" />
+                                            <field name="feedback" />
+                                        </tree>
+                                    </field>
+                                </sheet>
+                            </form>
+                        </field>
+                    </page>
+
                 </xpath>
             </field>
         </record>

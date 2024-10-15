@@ -27,11 +27,15 @@ Long description of module's purpose
         'views/mz_elearning_views.xml',
         
         'views/mz_elearning_menu_views.xml',
+        'views/website_slides_templates_course.xml',
     ],
     # only loaded in demonstration mode
     'demo': [
     ],
     'assets': {
+        'web.assets_frontend': [
+            'manzana_elearning/static/src/js/button_file.js',
+        ],
         'web.assets_backend': [
             'manzana_elearning/static/src/components/attendance_beneficiary/attendance_beneficiary.js',
             'manzana_elearning/static/src/components/attendance_beneficiary/attendance_beneficiary.xml',

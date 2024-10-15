@@ -25,3 +25,4 @@ class ManzanaElearning(http.Controller):
         return json.dumps({
             'course_attendees': course_attendees
         })
+

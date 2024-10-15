@@ -17,6 +17,8 @@ class MzElearning(models.Model):
     _inherit = 'slide.channel'
     _description = 'E-learning de Manzana de Cuidados'
 
+    assignments_ids = fields.One2many('mz.elearning.assignments', 'course_id')
+
 
 
 
