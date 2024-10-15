@@ -70,12 +70,12 @@
 
 
         <record model="ir.actions.act_window" id="action_mz_horarios_servicio">
-            <field name="name">Horarios de Servicios</field>
+            <field name="name">Configuración de Horarios de Personal </field>
             <field name="res_model">mz.horarios.servicio</field>
             <field name="view_mode">tree,form</field>
         </record>
 
-        <menuitem id="menu_action_mz_horarios_servicio" name="Horarios de Servicios" action="action_mz_horarios_servicio" parent="menu_servicio_curso" sequence="20" />
+        <menuitem id="menu_action_mz_horarios_servicio" name="Configuración de Horarios de Personal " action="action_mz_horarios_servicio" parent="menu_planificacion_curso" sequence="20" />
 
 
 

@@ -77,25 +77,28 @@ class MzSolicitudBeneficiario(models.Model):
 
 
     def action_approve(self):
-        self.state = 'approved'
-        beneficiario = self.env['mz.beneficiario'].create({
-            'name': self.name,
-            'apellido_paterno': self.apellido_paterno,
-            'apellido_materno': self.apellido_materno,
-            'primer_nombre': self.primer_nombre,
-            'segundo_nombre': self.segundo_nombre,
-            'tipo_documento': self.tipo_documento,
-            'numero_documento': self.numero_documento,
-            'fecha_nacimiento': self.fecha_nacimiento,
-            'direccion': self.direccion,
-            'telefono': self.telefono,
-            'email': self.email,
-            'programa_id' : self.programa_id.id,
-            'pais_id': self.pais_id.id,
-            'provincia_id': self.provincia_id.id,
-            'ciudad_id': self.ciudad_id.id
-        })
-        beneficiario.crear_user()
+        for record in self:
+            if self.env['mz.beneficiario'].search([('numero_documento', '=', record.numero_documento)]):
+                    raise ValidationError("Ya existe un beneficiario con esta identificación.")
+            beneficiario = self.env['mz.beneficiario'].create({
+                'name': record.name,
+                'apellido_paterno': record.apellido_paterno,
+                'apellido_materno': record.apellido_materno,
+                'primer_nombre': record.primer_nombre,
+                'segundo_nombre': record.segundo_nombre,
+                'tipo_documento': record.tipo_documento,
+                'numero_documento': record.numero_documento,
+                'fecha_nacimiento': record.fecha_nacimiento,
+                'direccion': record.direccion,
+                'telefono': record.telefono,
+                'email': record.email,
+                'programa_id' : record.programa_id.id,
+                'pais_id': record.pais_id.id,
+                'provincia_id': record.provincia_id.id,
+                'ciudad_id': record.ciudad_id.id
+            })
+            beneficiario.crear_user()
+            record.state = 'approved'
 
 
     def action_reject(self):
@@ -119,3 +122,16 @@ class MzSolicitudBeneficiario(models.Model):
         """
         email_regex = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
         return re.match(email_regex, email) is not None
+    
+    @api.model
+    def create(self, vals):
+        if self.env['mz.solicitud.beneficiario'].search([('numero_documento', '=', vals.get('numero_documento'))]):
+            raise ValidationError("Ya existe una solicitud de beneficiario con esta identificación.")
+        return super(MzSolicitudBeneficiario, self).create(vals)
+
+    def write(self, vals):
+        if 'numero_documento' in vals:
+            for record in self:
+                if self.env['mz.solicitud.beneficiario'].search([('numero_documento', '=', vals.get('numero_documento')), ('id', '!=', record.id)]):
+                    raise ValidationError("Ya existe una solicitud de beneficiario con esta identificación.")
+        return super(MzSolicitudBeneficiario, self).write(vals)

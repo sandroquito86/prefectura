@@ -8,8 +8,8 @@
               name="Programas"
               parent="menu_principal"
               sequence="4"/>
-    <menuitem id="menu_servicio_curso"
-              name="Servicios"
+    <menuitem id="menu_planificacion_curso"
+              name="Planificación"
               parent="menu_principal"
               sequence="5"/>
     <menuitem id="menu_beneficiario"

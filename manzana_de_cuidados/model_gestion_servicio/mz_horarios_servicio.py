@@ -16,7 +16,7 @@ class AsignacionHorarios(models.Model):
     name = fields.Char(string='Nombre',  compute='_compute_name', store=True)
     
     servicio_id = fields.Many2one(string='Servicio', comodel_name='mz.asignacion.servicio', ondelete='restrict')   
-    asi_servicio_id = fields.Many2one(string='Servicios', comodel_name='mz.items', ondelete='restrict')
+    asi_servicio_id = fields.Many2one(string='Servicios', comodel_name='mz.servicio', ondelete='restrict')
     personal_id = fields.Many2one(string='Personal', comodel_name='hr.employee', ondelete='restrict',)   
     domain_personal_id = fields.Char(string='Domain Personal',compute='_compute_author_domain_field')    
     detalle_horario_ids = fields.One2many(string='Detalle Horarios', comodel_name='mz.detalle.horarios', inverse_name='asignacion_horario_id',)

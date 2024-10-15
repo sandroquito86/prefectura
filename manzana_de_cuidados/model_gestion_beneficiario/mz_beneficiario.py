@@ -60,6 +60,8 @@ class Beneficiario(models.Model):
                 
     @api.model
     def create(self, vals):
+        if self.env['mz.beneficiario'].search([('numero_documento', '=', vals.get('numero_documento'))]):
+            raise ValidationError("Ya existe un beneficiario con esta identificación.")
         # Buscar si ya existe un beneficiario con el mismo número de documento
         numero_documento = vals.get('numero_documento')
         tipo_documento = vals.get('tipo_documento')
@@ -84,6 +86,13 @@ class Beneficiario(models.Model):
                 vals['beneficiario_id'] = new_beneficiario.id
 
         return super(Beneficiario, self).create(vals)
+    
+    def write(self, vals):
+        if 'numero_documento' in vals:
+            for record in self:
+                if self.env['mz.beneficiario'].search([('numero_documento', '=', vals.get('numero_documento')), ('id', '!=', record.id)]):
+                    raise ValidationError("Ya existe un beneficiario con esta identificación.")
+        return super(Beneficiario, self).write(vals)
 
     @api.constrains('numero_documento', 'tipo_documento')
     def _check_unique_documento(self):

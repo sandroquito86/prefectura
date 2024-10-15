@@ -6,10 +6,10 @@
             <field name="descripcion">Catálogo de tipos de dependientes</field>
         </record>
 
-        <record id="tipo_servicio" model="mz.catalogo">
+        <!-- <record id="tipo_servicio" model="mz.catalogo">
             <field name="name">Tipo Servicio</field>
             <field name="descripcion">Catálogo de tipos de Servicios</field>
-        </record>
+        </record> -->
         <!-- tipos de dependientes-->
         <record id="tipo_dependiente_hijo" model="mz.items">
             <field name="name">Hijo</field>
@@ -68,7 +68,7 @@
         </record>
 
         <!-- tipos de servicios-->
-        <record id="tipo_servicio_lavanderia" model="mz.items">
+        <!-- <record id="tipo_servicio_lavanderia" model="mz.items">
             <field name="name">Lavanderia</field>
             <field name="descripcion">Tipo de Servicio Lavanderia</field>
             <field name="catalogo_id" ref="tipo_servicio"/>
@@ -82,7 +82,7 @@
             <field name="name">Psicologíca</field>
             <field name="descripcion">Tipo de Servicio Psicologíca</field>
             <field name="catalogo_id" ref="tipo_servicio"/>
-        </record>
+        </record> -->
         
         
     </data>

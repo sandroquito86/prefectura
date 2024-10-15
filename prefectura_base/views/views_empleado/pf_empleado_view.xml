@@ -137,16 +137,27 @@
                                 <field name="primer_nombre" required="1"/>
                                 <field name="segundo_nombre" required="1"/>
                             </group>
-                            <group string="Lugar y Fecha de Nacimiento">
-                                <field name="identification_id" string="Cédula" />
-                                <field name="birthday" required="1"/>
-                                <field name="edad"/>
-                                <field name="country_id" required="1"/>
-                                <field name="provincia_id" required="1"/>
+                            <group string="ORGANIZACIÓN">
+                                <field name="department_id"/>
+                                <field name="job_id"/>
+                                <field name="parent_id" widget="many2one_avatar_user"/>
+                                <field name="coach_id" widget="many2one_avatar_user"/>
                             </group>
+                            
                         </group>
 
                         <group>
+                            <group string="CIUDADANIA">
+                                <field name="country_id" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                                <field name="ssnid"/>
+                                <field name="identification_id" string="Cédula" />
+                                <field name="passport_id"/>
+                                <field name="gender"/>
+                                <field name="birthday" required="1"/>
+                                <field name="edad"/>
+                                <field name="place_of_birth"/>
+                                <field name="country_of_birth"/>
+                            </group>
                             <group string="INFORMACIÓN">
                                 <field name="mobile_phone" widget="phone"/>
                                 <field name="work_phone" widget="phone"/>
@@ -157,12 +168,7 @@
                                 <field name="company_country_id" invisible="1"/>
                                 <field name="company_country_code" invisible="1"/>
                             </group>
-                            <group string="ORGANIZACIÓN">
-                                <field name="department_id"/>
-                                <field name="job_id"/>
-                                <field name="parent_id" widget="many2one_avatar_user"/>
-                                <field name="coach_id" widget="many2one_avatar_user"/>
-                            </group>
+                            
                         </group>
 
                         <field name="employee_properties" columns="2"/>
@@ -197,10 +203,10 @@
                                         <div class="o_address_format">
                                             <field name="private_street" placeholder="Calle..." class="o_address_street"/>
                                             <field name="private_street2" placeholder="Calle 2..." class="o_address_street"/>
-                                            <field name="private_city" placeholder="Ciudad" class="o_address_city"/>
-                                            <field name="private_state_id" class="o_address_state" placeholder="Estado" options="{'no_open': True, 'no_quick_create': True}" context="{'default_country_id': private_country_id}"/>
-                                            <field name="private_zip" placeholder="C.P." class="o_address_zip"/>
                                             <field name="private_country_id" placeholder="PAís" class="o_address_country" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
+                                            <field name="private_state_id" class="o_address_state" placeholder="Estado" options="{'no_open': True, 'no_quick_create': True}" context="{'default_country_id': private_country_id}"/>
+                                            <field name="ciudad_id" placeholder="Ciudad" options="{'no_open': True, 'no_quick_create': True}" class="o_address_city"/>                                            
+                                            <field name="private_zip" placeholder="C.P." class="o_address_zip"/>
                                         </div>
                                         <field name="private_email" string="Email"/>
                                         <field name="private_phone" string="Telefono"/>
@@ -227,14 +233,6 @@
                                         <field name="certificate"/>
                                         <field name="study_field"/>
                                         <field name="study_school"/>
-                                    </group>
-                                    <group string="CIUDADANÍA">
-                                        <field name="country_id" options="{&quot;no_open&quot;: True, &quot;no_create&quot;: True}"/>
-                                        <field name="ssnid"/>
-                                        <field name="passport_id"/>
-                                        <field name="gender"/>
-                                        <field name="place_of_birth"/>
-                                        <field name="country_of_birth"/>
                                     </group>
                                 </group>
                             </page>

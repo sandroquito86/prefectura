@@ -22,6 +22,8 @@ class PfEmployee(models.Model):
     sucursal_id = fields.Many2one('pf.sucursal', string='Sucursal', required=True)
     programa_id = fields.Many2one('pf.programas', string='Programa', required=True)
     modulo_ids = fields.Many2many('pf.modulo', string="Módulos", help="Selecciona los módulos a los que pertenece este beneficiario")
+    ciudad_id = fields.Many2one('res.country.ciudad', string='Ciudad' , ondelete='restrict', 
+                                   domain="[('state_id', '=?', private_state_id)]")
 
     @api.constrains('user_id')
     def _check_unique_user(self):

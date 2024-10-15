@@ -116,19 +116,19 @@
         </record>
 
         <record model="ir.actions.act_window" id="action_mz_asignacion_servicio">
-            <field name="name">Asignación de Servicios</field>
+            <field name="name">Asignación de Responsables de Servicios</field>
             <field name="res_model">mz.asignacion.servicio</field>
             <field name="view_mode">kanban,tree,form</field>
         </record>
 
         <record id="action_mz_asignacion_servicio_form" model="ir.actions.act_window">
-            <field name="name">Asignación de Servicio</field>
+            <field name="name">Asignación de Responsables de Servicios</field>
             <field name="res_model">mz.asignacion.servicio</field>
             <field name="view_mode">form</field>
             <field name="target">current</field>
         </record>
 
-        <menuitem id="menu_action_mz_asignacion_servicio" name="Asignación de Servicios" action="action_mz_asignacion_servicio" parent="menu_servicio_curso" sequence="10" />
+        <menuitem id="menu_action_mz_asignacion_servicio" name="Asignación de Responsables de Servicios" action="action_mz_asignacion_servicio" parent="menu_planificacion_curso" sequence="10" />
 
 
 

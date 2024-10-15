@@ -4,6 +4,7 @@ from logging.config import valid_ident
 import string
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
+from babel.dates import format_date
 # from datetime import datetime,time, datetime
 import datetime
 import time
@@ -33,7 +34,8 @@ class GenerarHorarios(models.Model):
 
     programa_id = fields.Many2one('pf.programas', string='Programa',store=True
                                   )
-
+    _sql_constraints = [('name_unique', 'UNIQUE(servicio_id,personal_id,mes_genera, anio)',
+                         "Ya existe AGENDA para esta persona en el MES seleccionado !!"),]
 
     @api.depends('servicio_id')
     def _compute_author_domain_field(self):
@@ -51,12 +53,13 @@ class GenerarHorarios(models.Model):
     def _compute_name(self):
         for record in self:
             if record.servicio_id and record.personal_id and record.mes_genera and record.anio:
-                record.name = record.servicio_id.name + " - " + record.personal_id.name + " - " + record.mes_genera + " - " + record.anio
+                mes_dict = dict(self.fields_get(allfields=['mes_genera'])['mes_genera']['selection'])
+                mes_nombre = mes_dict.get(record.mes_genera, '')
+                record.name = record.servicio_id.name + " - " + record.personal_id.name + " - " + mes_nombre + " - " + record.anio
             else:
                 record.name = "Generar Horarios"
 
-    _sql_constraints = [('name_unique', 'UNIQUE(servicio_id,personal_id,mes_genera, anio)',
-                         "Ya existe AGENDA para esta persona en el MES seleccionado !!"),]
+    
 
     @api.constrains('servicio_id', 'personal_id')
     def _check_detalle_generahorario(self):
@@ -89,7 +92,6 @@ class GenerarHorarios(models.Model):
         for record in self:
             record.personal_id = False
             record.mes_genera = False
-            record.anio = False
             record.turno_disponibles_ids = False
             record.programa_id = record.servicio_id.programa_id.id
 
@@ -97,7 +99,6 @@ class GenerarHorarios(models.Model):
     def _onchange_personal_id(self):
         for record in self:
             record.mes_genera = False
-            record.anio = False
             record.turno_disponibles_ids = False
             
     def obtener_dias_del_mes(self, mes, anio):
@@ -208,3 +209,12 @@ class PlanificacionServicio(models.Model):
     observacion = fields.Char(string='Observación')
     fecha_actualizacion = fields.Date(string='Fecha Actualiza', readonly=True, default=fields.Datetime.now, )
     maximo_beneficiarios = fields.Integer(string='Beneficiarios Maximos', default=1, required=True)
+    dia = fields.Char(string='Dia', compute='_compute_dia', store=True)
+
+    @api.depends('fecha')
+    def _compute_dia(self):
+        for record in self:
+            if record.fecha:
+                record.dia = format_date(record.fecha, 'EEEE', locale='es_ES')
+            else:
+                record.dia = ''

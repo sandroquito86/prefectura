@@ -12,15 +12,11 @@ class AsignarServicio(models.Model):
     _description = 'Asignación de Servicios' 
     _rec_name = 'servicio_id'
 
-    @api.model
-    def _get_tipo_servicios_domain(self):
-        catalogo_id = self.env.ref('manzana_de_cuidados.tipo_servicio').id
-        return [('catalogo_id', '=', catalogo_id)]
     
     name = fields.Char(string='Nombre', required=True, compute='_compute_name', store=True)
-    servicio_id = fields.Many2one(string='Servicio', comodel_name='mz.items', ondelete='restrict',domain=_get_tipo_servicios_domain)  
+    servicio_id = fields.Many2one(string='Servicio', comodel_name='mz.servicio', ondelete='restrict', required=True)  
     image = fields.Binary(string='Imagen', attachment=True) 
-    active = fields.Boolean(default=True, string='Activo')
+    active = fields.Boolean(default=True, string='Activo', tracking=True)
     count_responsables = fields.Integer(compute="_compute_count_responsables", string="")
     personal_ids = fields.Many2many(string='Empleados Responsables', comodel_name='hr.employee', relation='mz_asignacion_servicio_items_employee_rel', 
                                       column1='asignacion_servicio_id', column2='empleado_id')
