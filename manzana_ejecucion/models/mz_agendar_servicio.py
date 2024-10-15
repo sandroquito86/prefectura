@@ -67,12 +67,17 @@ class AgendarServicio(models.Model):
     @api.depends('servicio_id', 'personal_id')
     def _compute_horario_id_domain(self):
         for record in self:
-            horarios_planificados = self.env['mz.planificacion.servicio'].search([
+            domain = [
                 ('generar_horario_id.servicio_id', '=', record.servicio_id.id),
                 ('generar_horario_id.personal_id', '=', record.personal_id.id),
-                ('beneficiarios_count', '<', 'maximo_beneficiarios')  # Usamos el campo almacenado directamente
-            ])            
-            record.horario_id_domain = [('id', 'in', horarios_planificados.ids)]
+            ]
+            horarios_planificados = self.env['mz.planificacion.servicio'].search(domain)
+            
+            horarios_disponibles = horarios_planificados.filtered(
+                lambda h: h.beneficiarios_count < h.maximo_beneficiarios
+            )
+            
+            record.horario_id_domain = [('id', 'in', horarios_disponibles.ids)]
 
 
     
