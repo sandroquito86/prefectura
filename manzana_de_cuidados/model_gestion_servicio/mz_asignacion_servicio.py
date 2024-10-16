@@ -27,7 +27,7 @@ class AsignarServicio(models.Model):
     # servicio_domain_id = fields.Char(string='Domain Servicios',compute='_compute_author_domain_field')
     
 
-    programa_id = fields.Many2one('pf.programas', string='Programa', required=True, tracking=True)
+    programa_id = fields.Many2one('pf.programas', string='Programa', required=True, tracking=True, default=lambda self: self.env.programa_id)
 
     domain_programa_id = fields.Char(string='Domain Programa',compute='_compute_domain_programas')
 
@@ -44,7 +44,7 @@ class AsignarServicio(models.Model):
     def _compute_domain_personal_ids(self):
         for record in self:
             if record.programa_id:
-                employees = self.env['hr.employee'].search([('sucursal_id', '=', [self.programa_id.sucursal_id.id])])
+                employees = self.env['hr.employee'].search([('programa_id', '=', [self.programa_id.id])])
                 record.domain_personal_ids = [('id', 'in', employees.ids)]
             else:
                 record.domain_personal_ids = [('id', 'in', [])]

@@ -20,7 +20,7 @@
             <field name="model">mz.solicitud.beneficiario</field>
             <field name="type">form</field>
             <field name="arch" type="xml">
-                <form string="Solicitud de Beneficiario" create="true" delete="true" edit="true">
+                <form string="Solicitud de Beneficiario" create="true" delete="true" edit="true" >
                     <header>
                         <button name="action_submit" type="object" string="Enviar" class="btn-primary"
                                 invisible="state != 'draft'"/>
@@ -31,34 +31,34 @@
                         <field name="state" widget="statusbar" statusbar_visible="draft,submitted,approved,rejected"/>
                     </header>
                     <sheet>
-                    <div class="row justify-content-between position-relative w-100 m-0 mb-2">
-                        <div class="oe_title mw-75 ps-0 pe-2">
-                        <h1 class="d-flex flex-row align-items-center">
-                            <field name="name" placeholder="Nombre del Beneficiario" force_save="1" required="True" style="font-size: min(4vw, 2.6rem);"/>
-                        </h1>
+                        <div class="row justify-content-between position-relative w-100 m-0 mb-2">
+                            <div class="oe_title mw-75 ps-0 pe-2">
+                                <h1 class="d-flex flex-row align-items-center">
+                                    <field name="name" placeholder="Nombre del Beneficiario" force_save="1" required="True" style="font-size: min(4vw, 2.6rem);" readonly="state in ['approved', 'rejected']"/>
+                                </h1>
+                            </div>
                         </div>
-                    </div>
                         <group>
                             <group string="Apellidos y Nombres">
-                                <field name="apellido_paterno"/>
-                                <field name="apellido_materno"/>
-                                <field name="primer_nombre"/>
-                                <field name="segundo_nombre"/>
-                                <field name="tipo_documento"/>
-                                <field name="numero_documento"/>
+                                <field name="apellido_paterno" readonly="state in ['approved', 'rejected']"/>
+                                <field name="apellido_materno" readonly="state in ['approved', 'rejected']"/>
+                                <field name="primer_nombre" readonly="state in ['approved', 'rejected']"/>
+                                <field name="segundo_nombre" readonly="state in ['approved', 'rejected']"/>
+                                <field name="tipo_documento" readonly="state in ['approved', 'rejected']"/>
+                                <field name="numero_documento" readonly="state in ['approved', 'rejected']"/>
                             </group>
                             <group string="Lugar y Fecha de Nacimiento">
-                                <field name="fecha_nacimiento"/>
-                                <field name="edad"/>
-                                <field name="pais_id"/>
-                                <field name="provincia_id" readonly="not pais_id"/>
-                                <field name="ciudad_id"  readonly="not provincia_id"/>
-                                <field name="direccion"/>
+                                <field name="fecha_nacimiento" readonly="state in ['approved', 'rejected']"/>
+                                <field name="edad" readonly="state in ['approved', 'rejected']"/>
+                                <field name="pais_id" readonly="state in ['approved', 'rejected']"/>
+                                <field name="provincia_id" readonly="state in ['approved', 'rejected']"/>
+                                <field name="ciudad_id" readonly="state in ['approved', 'rejected']"/>
+                                <field name="direccion" readonly="state in ['approved', 'rejected']"/>
                             </group>
                             <group string="Datos de Contacto">
-                            <field name="telefono"/>
-                            <field name="email"/>
-                            <field name="programa_id" options="{'no_create': True, 'no_open': True, 'no_create_edit': True}"/>
+                                <field name="telefono" readonly="state in ['approved', 'rejected']"/>
+                                <field name="email" readonly="state in ['approved', 'rejected']"/>
+                                <field name="programa_id" options="{'no_create': True, 'no_open': True, 'no_create_edit': True}" readonly="state in ['approved', 'rejected']"/>
                             </group>
                         </group>
                         <div class="oe_chatter">

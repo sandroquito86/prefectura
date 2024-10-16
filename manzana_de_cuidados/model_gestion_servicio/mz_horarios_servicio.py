@@ -15,13 +15,23 @@ class AsignacionHorarios(models.Model):
     
     name = fields.Char(string='Nombre',  compute='_compute_name', store=True)
     
-    servicio_id = fields.Many2one(string='Servicio', comodel_name='mz.asignacion.servicio', ondelete='restrict')   
+    servicio_id = fields.Many2one(string='Servicio', comodel_name='mz.asignacion.servicio', ondelete='restrict', domain="[('programa_id', '=?', programa_id)]", required=True, tracking=True)
+    programa_id = fields.Many2one('pf.programas', string='Programa', required=True, tracking=True, default=lambda self: self.env.programa_id) 
     asi_servicio_id = fields.Many2one(string='Servicios', comodel_name='mz.servicio', ondelete='restrict')
+    domain_programa_id = fields.Char(string='Domain Programa',compute='_compute_domain_programas')
     personal_id = fields.Many2one(string='Personal', comodel_name='hr.employee', ondelete='restrict',)   
-    domain_personal_id = fields.Char(string='Domain Personal',compute='_compute_author_domain_field')    
+    domain_personal_id = fields.Char(string='Domain Personal',compute='_compute_author_domain_field') 
+    active = fields.Boolean(default=True, string='Activo', tracking=True)   
     detalle_horario_ids = fields.One2many(string='Detalle Horarios', comodel_name='mz.detalle.horarios', inverse_name='asignacion_horario_id',)
     
-    
+    @api.depends('servicio_id')
+    def _compute_domain_programas(self):
+        for record in self:
+            programas = self.env['pf.programas'].search([('modulo_id', '=', self.env.ref('prefectura_base.modulo_2').id)])
+            if programas:
+                record.domain_programa_id = [('id', 'in', programas.ids)]
+            else:
+                record.domain_programa_id = [('id', 'in', [])]
     
     @api.depends('servicio_id')
     def _compute_name(self):

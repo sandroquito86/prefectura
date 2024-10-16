@@ -23,7 +23,7 @@ class GenerarHorarios(models.Model):
     def _default_anio(self):
         return time.strftime('%Y')   
     name = fields.Char(string='Descripción', required=True, compute='_compute_name',)
-    servicio_id = fields.Many2one(string='Servicio', comodel_name='mz.asignacion.servicio', ondelete='restrict')  
+    servicio_id = fields.Many2one(string='Servicio', comodel_name='mz.asignacion.servicio', ondelete='restrict',domain="[('programa_id', '=?', programa_id)]", required=True, tracking=True)  
     personal_id = fields.Many2one(string='Personal', comodel_name='hr.employee', ondelete='restrict',) 
     mes_genera = fields.Selection([('1', 'ENERO'), ('2', 'FEBRERO'), ('3', 'MARZO'), ('4', 'ABRIL'), ('5', 'MAYO'), ('6', 'JUNIO'), ('7', 'JULIO'), ('8', 'AGOSTO'), 
                                    ('9', 'SEPTIEMBRE'), ('10', 'OCTUBRE'), ('11', 'NOVIEMBRE'), ('12', 'DICIEMBRE')],string='Mes a Generar')
@@ -32,10 +32,20 @@ class GenerarHorarios(models.Model):
     turno_disponibles_ids = fields.One2many(string='', comodel_name='mz.planificacion.servicio', inverse_name='generar_horario_id',)
     domain_personal_id = fields.Char(string='Domain Personal',compute='_compute_author_domain_field') 
 
-    programa_id = fields.Many2one('pf.programas', string='Programa',store=True
-                                  )
+    programa_id = fields.Many2one('pf.programas', string='Programa', required=True, tracking=True, default=lambda self: self.env.programa_id) 
+    domain_programa_id = fields.Char(string='Domain Programa',compute='_compute_domain_programas')
+    active = fields.Boolean(default=True, string='Activo', tracking=True)
     _sql_constraints = [('name_unique', 'UNIQUE(servicio_id,personal_id,mes_genera, anio)',
                          "Ya existe AGENDA para esta persona en el MES seleccionado !!"),]
+    
+    @api.depends('servicio_id')
+    def _compute_domain_programas(self):
+        for record in self:
+            programas = self.env['pf.programas'].search([('modulo_id', '=', self.env.ref('prefectura_base.modulo_2').id)])
+            if programas:
+                record.domain_programa_id = [('id', 'in', programas.ids)]
+            else:
+                record.domain_programa_id = [('id', 'in', [])]
 
     @api.depends('servicio_id')
     def _compute_author_domain_field(self):
@@ -93,7 +103,6 @@ class GenerarHorarios(models.Model):
             record.personal_id = False
             record.mes_genera = False
             record.turno_disponibles_ids = False
-            record.programa_id = record.servicio_id.programa_id.id
 
     @api.onchange('personal_id')
     def _onchange_personal_id(self):
@@ -197,8 +206,9 @@ class PlanificacionServicio(models.Model):
     def _compute_horario(self):
         for record in self:
             if (record.fecha and record.horainicio):
-                record.horario = str(record.fecha) + " (hora inicio " + str(
+                record.horario = " (hora inicio " + str(
                     datetime.timedelta(hours=record.horainicio)).rsplit(':', 1)[0] + ")"
+                
     generar_horario_id = fields.Many2one(string='detalle', comodel_name='mz.genera.planificacion.servicio', ondelete='restrict',)
     fecha = fields.Date()
     horainicio = fields.Float(string='Hora de Inicio', index=True,)

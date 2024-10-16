@@ -12,6 +12,10 @@
               name="Planificación"
               parent="menu_principal"
               sequence="5"/>
+    <menuitem id="menu_mz_ejecucion"
+              name="Ejecución"
+              parent="menu_principal"
+              sequence="7"/>
     <menuitem id="menu_beneficiario"
               name="Beneficiario"
               parent="menu_principal"
