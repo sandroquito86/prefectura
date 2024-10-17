@@ -10,7 +10,7 @@ class AgendarServicio(models.Model):
     _description = 'Agendar Servicio'
     _inherit = ['mail.thread', 'mail.activity.mixin'] 
     
-    STATE_SELECTION = [('borrador', 'Borrador'), ('solicitud', 'Solicitado'),('aprobado', 'Aprobado'),
+    STATE_SELECTION = [('borrador', 'Borrador'), ('solicitud', 'Solicitado'),
                        ('atendido', 'Atendido'), ('anulado', 'Anulado')]
 
     state = fields.Selection(STATE_SELECTION, 'Estado', readonly=True, tracking=True, default='borrador', )
@@ -136,14 +136,7 @@ class AgendarServicio(models.Model):
         for record in self:
             record.horario_id = False
 
-    def solicitar_horario(self):
-        for record in self:
-            if not record.horario_id:
-                raise ValidationError("Debe seleccionar un horario.")
-            codigo = self._generate_codigo()
-            record.codigo = codigo
-            record.state = 'solicitud'
-
+    
     def _generate_codigo(self):
         current_year = datetime.now().year
         current_month = datetime.now().month
@@ -179,6 +172,34 @@ class AgendarServicio(models.Model):
                     'planificacion_id': record.horario_id.id,
                     'beneficiario_id': record.beneficiario_id.id,
                 })
+    def solicitar_horario(self):
+        for record in self:
+            if not record.horario_id:
+                raise ValidationError("Debe seleccionar un horario.")
+            codigo = self._generate_codigo()
+            record.codigo = codigo
+            # Verificar nuevamente la capacidad antes de aprobar
+            asistencias_count = self.env['mz.asistencia_servicio'].search_count([
+                ('planificacion_id', '=', record.horario_id.id)
+            ])
+            if asistencias_count >= record.horario_id.maximo_beneficiarios:
+                raise ValidationError(f"No se puede aprobar. El horario ya ha alcanzado su capacidad máxima de {record.horario_id.maximo_beneficiarios} beneficiarios.")
+            
+            record.state = 'solicitud'
+            if record.horario_id and record.beneficiario_id:
+                self.env['mz.asistencia_servicio'].create({
+                    'planificacion_id': record.horario_id.id,
+                    'beneficiario_id': record.beneficiario_id.id,
+                    'fecha': record.fecha_solicitud,
+                    'programa_id': record.programa_id.id,
+                    'servicio_id': record.servicio_id.id,
+                    'personal_id': record.personal_id.id,
+                })
+
+    def anular_horario(self):
+        for record in self:
+            raise ValidationError("No se puede anular la solicitud. Por favor, contacte al administrador del sistema.")
+            record.state = 'anulado'
 
 
        

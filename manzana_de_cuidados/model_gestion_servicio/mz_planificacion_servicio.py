@@ -11,6 +11,8 @@ import time
 import json
 global NoTieneHorario
 
+from datetime import timedelta
+
 
 class GenerarHorarios(models.Model):
     _name = 'mz.genera.planificacion.servicio'
@@ -201,14 +203,7 @@ class PlanificacionServicio(models.Model):
 
     horario = fields.Char(string='Horario',
                           compute='_compute_horario')
-
-    @api.depends('fecha', 'horainicio')
-    def _compute_horario(self):
-        for record in self:
-            if (record.fecha and record.horainicio):
-                record.horario = " (hora inicio " + str(
-                    datetime.timedelta(hours=record.horainicio)).rsplit(':', 1)[0] + ")"
-                
+     
     generar_horario_id = fields.Many2one(string='detalle', comodel_name='mz.genera.planificacion.servicio', ondelete='restrict',)
     fecha = fields.Date()
     horainicio = fields.Float(string='Hora de Inicio', index=True,)
@@ -228,3 +223,13 @@ class PlanificacionServicio(models.Model):
                 record.dia = format_date(record.fecha, 'EEEE', locale='es_ES')
             else:
                 record.dia = ''
+
+    @api.depends('fecha', 'horainicio', 'horafin', 'dia')
+    def _compute_horario(self):
+        for record in self:
+            if record.fecha and record.horainicio and record.horafin:
+                hora_inicio = str(timedelta(hours=record.horainicio)).rsplit(':', 1)[0]
+                hora_fin = str(timedelta(hours=record.horafin)).rsplit(':', 1)[0]
+                record.horario = f"{record.dia} (hora inicio: {hora_inicio}, hora fin: {hora_fin})"
+            else:
+                record.horario = ''
