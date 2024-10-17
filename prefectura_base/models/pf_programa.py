@@ -7,7 +7,8 @@ class PfProgramas(models.Model):
     _description = 'Programas'
 
     
-    name = fields.Char(string='Nombre', required=True)
+    name = fields.Char(string='Nombre', required=True)    
+    sigla = fields.Char(string='Abreviatura', required=True, size=10)    
     sucursal_id = fields.Many2one('pf.sucursal', string='Sucursal', required=True)
     email = fields.Char(string='Email')
     phone = fields.Char(string='Teléfono')

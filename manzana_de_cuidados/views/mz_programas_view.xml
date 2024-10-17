@@ -5,7 +5,7 @@
         <field name="name">mz.pf.programas.form</field>
         <field name="model">pf.programas</field>
         <field name="arch" type="xml">
-            <form string="Programas" >
+            <form string="Programas">
                 <header>
                     <button name="action_activar" string="Activar Programa" type="object" class="btn-primary" invisible="active"/>
                     <button name="action_publish" string="Publicar Programa" type="object" class="btn-primary" invisible="not mostrar_boton_publicar"/>
@@ -24,6 +24,7 @@
                     </div>
                     <group string="Informacion del Programa">
                         <group>
+                            <field name="sigla"/>
                             <field name="sucursal_id" options="{'no_create': True, 'no_open': True, 'no_create_edit': True}"/>
                             <field name="provincia_id"/>
                             <field name="ciudad_id"/>
@@ -138,16 +139,20 @@
                                     </a>
                                 </h4>
                                 <div>
-                                    <span class="fa fa-envelope"/> <field name="email"/>
+                                    <span class="fa fa-envelope"/>
+                                    <field name="email"/>
                                 </div>
                                 <div>
-                                    <span class="fa fa-phone"/> <field name="phone"/>
+                                    <span class="fa fa-phone"/>
+                                    <field name="phone"/>
                                 </div>
                                 <!-- <div>
                                     <field name="model_count_mz"/> SERVICIOS
                                 </div> -->
                                 <div>
-                                    <span class="fa fa-headset"/> <field name="model_count_mz" invisible="1"/> <field name="servicios_text"/> 
+                                    <span class="fa fa-headset"/>
+                                    <field name="model_count_mz" invisible="1"/>
+                                    <field name="servicios_text"/>
                                 </div>
                             </div>
                         </div>
@@ -157,14 +162,14 @@
         </field>
     </record>
 
-    
-    
+
+
     <!-- vista de autoridades  tree - pertenecientre a hr.employee  -->
 
     <!-- Vista de árbol personalizada para autoridades_ids -->
     <record id="view_autoridades_hr_employee_tree" model="ir.ui.view">
         <field name="name">autoridades.hr.employee.tree</field>
-        <field name="model">hr.employee</field> <!-- Cambia 'res.partner' por el modelo correcto -->
+        <field name="model">hr.employee</field>        <!-- Cambia 'res.partner' por el modelo correcto -->
         <field name="arch" type="xml">
             <tree>
                 <field name="name"/>
