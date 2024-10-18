@@ -40,7 +40,12 @@ Long description of module's purpose
         'views/views_beneficiario/mz_beneficiario_views.xml',
 
         'views/views_ejecucion/mz_agendar_servicio_view.xml',
+        'views/views_ejecucion/mz_consulta_view.xml',
         'views/views_ejecucion/mz_asistencia_servicio_view.xml',
+        'views/views_ejecucion/mz_historia_clinica_view.xml',
+
+        'views/views_for_beneficiario/mz_asistencia_servicio_benef_view.xml',
+        
         
         'views/wizard/mz_wizard_quitar_publicacion_programa.xml',
     ],

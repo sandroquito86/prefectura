@@ -16,7 +16,13 @@ class Beneficiario(models.Model):
     company_id = fields.Many2one('res.company', string='Compañía', required=True, default=lambda self: self.env.company)
     programa_id = fields.Many2one('pf.programas', string='Programa', required=True)
     
+    historia_clinica_ids = fields.One2many('mz.historia.clinica', 'beneficiario_id', string='Historias Clínicas')
+    consulta_count = fields.Integer(string='Número de Consultas', compute='_compute_consulta_count')
 
+    @api.depends('historia_clinica_ids')
+    def _compute_consulta_count(self):
+        for beneficiario in self:
+            beneficiario.consulta_count = len(beneficiario.historia_clinica_ids)
     
 
     @api.onchange('email')
@@ -118,6 +124,33 @@ class Beneficiario(models.Model):
         }
         user = self.env['res.users'].create(user_vals)
         self.user_id = user.id
+
+    def action_view_historia_clinica(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Historial Clínico',
+            'view_mode': 'tree,form',
+            'res_model': 'mz.historia.clinica',
+            'domain': [('beneficiario_id', '=', self.id)],
+            'context': dict(self.env.context, create=False)
+        }
+    
+    def action_view_asistencia_servicio(self):
+        self.ensure_one()
+        return {
+            'type': 'ir.actions.act_window',
+            'name': 'Servicios Recibidos',
+            'view_mode': 'tree,form',
+            'res_model': 'mz.asistencia_servicio',
+            'views': [
+                (self.env.ref('manzana_de_cuidados.view_asistencia_servicio_benef_tree').id, 'tree'),
+                (self.env.ref('manzana_de_cuidados.view_asistencia_servicio_benef_form').id, 'form')
+            ],
+            'search_view_id': self.env.ref('manzana_de_cuidados.view_asistencia_servicio_benef_search').id,
+            'domain': [('beneficiario_id', '=', self.id), ('asistio', '=', 'si')],
+            'context': dict(self.env.context, create=False)
+        }
     
 
     

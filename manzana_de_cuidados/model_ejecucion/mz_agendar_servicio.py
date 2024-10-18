@@ -171,6 +171,7 @@ class AgendarServicio(models.Model):
                 self.env['mz.asistencia_servicio'].create({
                     'planificacion_id': record.horario_id.id,
                     'beneficiario_id': record.beneficiario_id.id,
+                    'codigo': record.codigo,
                 })
     def solicitar_horario(self):
         for record in self:
@@ -184,7 +185,11 @@ class AgendarServicio(models.Model):
             ])
             if asistencias_count >= record.horario_id.maximo_beneficiarios:
                 raise ValidationError(f"No se puede aprobar. El horario ya ha alcanzado su capacidad máxima de {record.horario_id.maximo_beneficiarios} beneficiarios.")
-            
+            existe_asistencia = self.search([
+                ('beneficiario_id', '=', record.beneficiario_id.id),
+                ('horario_id', '=', record.horario_id.id),
+                ('state', 'in', ['solicitud', 'aprobado'])
+            ])
             record.state = 'solicitud'
             if record.horario_id and record.beneficiario_id:
                 self.env['mz.asistencia_servicio'].create({
@@ -194,6 +199,7 @@ class AgendarServicio(models.Model):
                     'programa_id': record.programa_id.id,
                     'servicio_id': record.servicio_id.id,
                     'personal_id': record.personal_id.id,
+                    'codigo': record.codigo,
                 })
 
     def anular_horario(self):

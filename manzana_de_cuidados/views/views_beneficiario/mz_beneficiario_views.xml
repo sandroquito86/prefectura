@@ -24,8 +24,23 @@
     <field name="type">form</field>
     <field name="mode">primary</field>
     <field name="arch" type="xml">
-      <form string="Beneficiarios" create="true" delete="true" edit="true">
+        <form string="Beneficiarios" create="true" delete="true" edit="true">
         <sheet>
+        <div class="oe_button_box" name="button_box">
+            <button name="action_view_asistencia_servicio" type="object" class="oe_stat_button" icon="fa-braille">
+                <div class="o_stat_info">
+                    <field name="consulta_count" class="o_stat_value"/>
+                    <span class="o_stat_text">Servicios Recibidos</span>
+                </div>
+            </button>
+            <button name="action_view_historia_clinica" type="object" class="oe_stat_button" icon="fa-heartbeat">
+                <div class="o_stat_info">
+                    <field name="consulta_count" class="o_stat_value"/>
+                    <span class="o_stat_text">Historial Clínico</span>
+                </div>
+            </button>
+            
+        </div>
           <div class="row justify-content-between position-relative w-100 m-0 mb-2">
             <div class="oe_title mw-75 ps-0 pe-2">
               <h1 class="d-flex flex-row align-items-center">

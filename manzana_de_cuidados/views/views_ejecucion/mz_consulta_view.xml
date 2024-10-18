@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+        <!-- Vista Form -->
+        <record id="view_mz_consulta_form" model="ir.ui.view">
+            <field name="name">mz.consulta.form</field>
+            <field name="model">mz.consulta</field>
+            <field name="arch" type="xml">
+                <form string="Consulta Médica">
+                    <header>
+                        <!-- Aquí puedes agregar botones de acción si los necesitas -->
+                    </header>
+                    <sheet>
+                        <div class="oe_title">
+                            <h1>
+                                <field name="codigo" readonly="1" force_save="1"/>
+                            </h1>
+                        </div>
+                        <group>
+                            <group>
+                                <field name="fecha" required="1" readonly="1" force_save="1"/>
+                                <field name="hora" widget="float_time" readonly="1" force_save="1"/>
+                                <field name="beneficiario_id" required="1" force_save="1" readonly="1" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="programa_id" required="1" force_save="1" readonly="1" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="servicio_id" readonly="1" force_save="1" options="{'no_create': True, 'no_open': True}"/>
+                                <field name="personal_id" readonly="1" force_save="1" options="{'no_create': True, 'no_open': True}"/>
+                            </group>
+                            <group>
+                                <field name="genero" readonly="1" force_save="1"/>
+                                <field name="fecha_nacimiento" readonly="1" force_save="1"/>
+                                <field name="edad" readonly="1" force_save="1"/>
+                            </group>
+                        </group>
+                        <notebook>
+                            <page string="Motivo de Consulta y Síntomas">
+                                <group>
+                                    <field name="motivo_consulta" placeholder="Describa el motivo principal de la consulta"/>
+                                    <field name="sintomas" placeholder="Detalle los síntomas que presenta el paciente"/>
+                                </group>
+                            </page>
+                            <page string="Signos Vitales">
+                                <group>
+                                    <group>
+                                        <field name="presion_arterial"/>
+                                        <field name="frecuencia_cardiaca"/>
+                                        <field name="frecuencia_respiratoria"/>
+                                    </group>
+                                    <group>
+                                        <field name="temperatura"/>
+                                        <field name="peso"/>
+                                        <field name="altura"/>
+                                        <field name="imc"/>
+                                    </group>
+                                </group>
+                            </page>
+                            <page string="Examen Físico y Diagnóstico">
+                                <group>
+                                    <field name="examen_fisico" placeholder="Registre los hallazgos del examen físico"/>
+                                    <field name="diagnostico" placeholder="Anote el diagnóstico del paciente"/>
+                                    <field name="tratamiento" placeholder="Detalle el plan de tratamiento"/>
+                                </group>
+                            </page>
+                            <page string="Historial Médico">
+                                <group>
+                                    <field name="antecedentes_personales" placeholder="Antecedentes médicos personales del paciente"/>
+                                    <field name="antecedentes_familiares" placeholder="Antecedentes médicos familiares relevantes"/>
+                                    <field name="alergias" placeholder="Alergias conocidas del paciente"/>
+                                    <field name="medicamentos_actuales" placeholder="Medicamentos que el paciente toma actualmente"/>
+                                </group>
+                            </page>
+                            <page string="Seguimiento">
+                                <group>
+                                    <field name="observaciones" placeholder="Observaciones adicionales"/>
+                                    <field name="proxima_cita"/>
+                                </group>
+                            </page>
+                        </notebook>
+                    </sheet>
+                    <div class="oe_chatter">
+                        <field name="message_follower_ids" widget="mail_followers"/>
+                        <field name="message_ids" widget="mail_thread"/>
+                    </div>
+                </form>
+            </field>
+        </record>
+        
+        <record id="action_consulta_form" model="ir.actions.act_window">
+            <field name="name">Consulta Médica</field>
+            <field name="res_model">mz.consulta</field>
+            <field name="view_mode">form</field>
+            <field name="target">current</field>
+        </record>
+    </data>
+</odoo>

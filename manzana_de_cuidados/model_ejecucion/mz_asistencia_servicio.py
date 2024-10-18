@@ -14,15 +14,31 @@ class AsistenciaServicio(models.Model):
     planificacion_id = fields.Many2one('mz.planificacion.servicio', string='Planificación', required=True, ondelete='cascade')
     beneficiario_id = fields.Many2one('mz.beneficiario', string='Beneficiario', required=True)
     fecha = fields.Date('Fecha')
-    asistio = fields.Boolean(string='Asistió', default=False)
+    asistio = fields.Selection([('si', 'Si'), ('no', 'No'), ('pendiente', 'Pendiente')], string='Asistió', default='pendiente')
+    atendido = fields.Boolean(string='Atendido', default=False)
     observacion = fields.Text(string='Observación')
     programa_id = fields.Many2one('pf.programas', string='Programa', required=True)
     servicio_id = fields.Many2one(string='Servicio', comodel_name='mz.asignacion.servicio', ondelete='restrict')
     personal_id = fields.Many2one(string='Personal', comodel_name='hr.employee', ondelete='restrict') 
+    codigo = fields.Char(string='Código', readonly=True, store=True)
+    tipo_servicio = fields.Selection([('normal', 'Normal'), ('medico', 'Medico')], string='Tipo de Servicio', compute='_compute_tipo_servicio')
+
 
     _sql_constraints = [
         ('unique_planificacion_beneficiario', 'unique(planificacion_id, beneficiario_id)', 
          'Ya existe un registro de asistencia para este beneficiario en esta planificación.')]
+    
+    @api.depends('servicio_id')
+    def _compute_tipo_servicio(self):
+        for record in self:
+            record.tipo_servicio = record.servicio_id.servicio_id.tipo_servicio
+
+    def action_asistio(self):
+        self.asistio = 'si'
+
+    def action_no_asistio(self):
+        self.asistio = 'no'
+
 
 class PlanificacionServicio(models.Model):
     _inherit = 'mz.planificacion.servicio'

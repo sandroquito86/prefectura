@@ -40,7 +40,7 @@
                                 <field name="programa_id"  readonly="1" options="{'no_create': True, 'no_open': True, 'no_create_edit': True, 'domain_field': 'domain_programa_id'}"  />
                                 <field name="active" readonly="1" widget="boolean_toggle" />
                                 <field name="if_publicado" readonly="1" widget="boolean_toggle"/>
-                                <field name="personal_ids" options="{'no_create': True, 'no_open': True, 'no_create_edit': True, 'domain_field': 'domain_personal_ids'}" />
+                                <field name="personal_ids" options="{'no_create': True, 'no_open': True, 'no_create_edit': True, 'domain_field': 'domain_personal_ids', 'create': False}" />
                                 <field name="domain_programa_id" invisible="1" />
                                 <field name="count_responsables" invisible="1"  />
                                 <field name="mostrar_boton_publicar" invisible="1"/>

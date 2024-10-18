@@ -38,7 +38,16 @@ class AsignarServicio(models.Model):
     mostrar_boton_publicar = fields.Boolean(string='Mostrar Botón Publicar', compute='_compute_mostrar_boton_publicar')
     mostrar_bot_retirar_public = fields.Boolean(string='Mostrar Botón Retirar Publicar', compute='_compute_mostrar_bot_retirar_public')
 
-    _sql_constraints = [('name_unique', 'UNIQUE(name)', "El servicio no puede estar duplicado en el mismo programa.")]  
+    @api.constrains('name', 'programa_id')
+    def _check_name_unique_per_programa(self):
+        for record in self:
+            domain = [
+                ('name', '=', record.name),
+                ('programa_id', '=', record.programa_id.id),
+                ('id', '!=', record.id),  # Excluye el registro actual para permitir actualizaciones
+            ]
+            if self.search_count(domain) > 0:
+                raise ValidationError("El servicio no puede estar duplicado en el mismo programa.")
 
     @api.depends('programa_id')
     def _compute_domain_personal_ids(self):

@@ -46,6 +46,7 @@ class PlanificacionServicio(models.Model):
                 record.horario = f"{record.fecha} (hora inicio {hora.seconds // 3600:02d}:{(hora.seconds // 60) % 60:02d})"
             else:
                 record.horario = False
+                
 
  
    
