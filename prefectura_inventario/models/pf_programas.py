@@ -1,9 +1,13 @@
 from odoo import models, fields, api
+from odoo.exceptions import UserError
 
 class PfProgramas(models.Model):
     _inherit = 'pf.programas'
 
-    warehouse_id = fields.Many2one('stock.warehouse', string='Almacén Asociado', readonly=True)
+    warehouse_ids = fields.One2many('stock.warehouse', 'programa_id', string='Almacenes')
+
+    def get_warehouses(self):
+        return self.env['stock.warehouse'].search([('programa_id', '=', self.id)])
 
     @api.model
     def create(self, vals):
@@ -14,56 +18,47 @@ class PfProgramas(models.Model):
     def _create_inventory_structure(self):
         self.ensure_one()
         WarehouseObj = self.env['stock.warehouse']
-        LocationObj = self.env['stock.location']
-        
         # Crear almacén con nombre descriptivo
-        warehouse_name = f"{self.name}(ALMACEN)"
+        warehouse_name = f"{self.name} (ALMACÉN)"
         warehouse_vals = {
             'name': warehouse_name,
-            'code': self.sigla[:15],
+            'code': self.sigla[:5],  # Limitamos a 5 caracteres para evitar problemas
             'company_id': self.sucursal_id.company_id.id,
+            'programa_id': self.id,  # Asociamos el almacén al programa
         }
         warehouse = WarehouseObj.create(warehouse_vals)
         
-        # Asociar el almacén al programa
-        self.warehouse_id = warehouse.id
-
         # Actualizar el nombre de la ubicación de existencias
         stock_location = warehouse.lot_stock_id
         stock_location.write({
-            'name': 'Existencias'
+            'name': 'Existencias',
+            'programa_id': self.id,
         })
-
-        # Actualizar el nombre completo de la ubicación de existencias
+        # Actualizar el nombre completo de la ubicación
         stock_location._compute_complete_name()
-
         return True
-    
+
     def write(self, vals):
         res = super(PfProgramas, self).write(vals)
-        
-        # Verificar si se cambió el nombre o la sigla
         if 'name' in vals or 'sigla' in vals:
             for programa in self:
-                if programa.warehouse_id:
+                warehouses = programa.warehouse_ids
+                if warehouses:
                     warehouse_vals = {}
-                    
-                    # Actualizar el nombre del almacén si cambió el nombre del programa
                     if 'name' in vals:
-                        warehouse_vals['name'] = f"{programa.name}(ALMACEN)"
-                    
-                    # Actualizar el código del almacén si cambió la sigla
+                        warehouse_vals['name'] = f"{programa.name} (ALMACÉN)"
                     if 'sigla' in vals:
-                        warehouse_vals['code'] = programa.sigla[:15]
-                    
-                    # Actualizar el almacén
+                        warehouse_vals['code'] = programa.sigla[:10]
                     if warehouse_vals:
-                        programa.warehouse_id.write(warehouse_vals)
-                        
-                        # Actualizar el nombre de la ubicación de stock si cambió el nombre del almacén
-                        if 'name' in vals:
-                            stock_location = programa.warehouse_id.lot_stock_id
-                            stock_location.write({'name': 'Existencias'})
-                            stock_location._compute_complete_name()
-        
+                        warehouses.write(warehouse_vals)
+                    if 'name' in vals:
+                        locations = self.env['stock.location'].search([('programa_id', '=', programa.id)])
+                        locations.write({'name': programa.name})
+                        locations._compute_complete_name()
         return res
+
+    def unlink(self):
+        for programa in self:
+            if programa.warehouse_ids:
+                raise UserError("No se puede eliminar un programa con almacenes asociados. Por favor, elimine primero los almacenes.")
+        return super(PfProgramas, self).unlink()

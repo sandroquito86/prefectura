@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data>
+
+
+        <!-- Herencia de la vista del almacén para ocultar el grupo con company_id y partner_id -->
+        <record id="view_warehouse_inherited" model="ir.ui.view">
+            <field name="name">stock.warehouse.inherit.hide_company_partner</field>
+            <field name="model">stock.warehouse</field>
+            <field name="inherit_id" ref="stock.view_warehouse"/>
+            <field name="arch" type="xml">
+                <!-- Seleccionamos el grupo con company_id y partner_id -->
+                <xpath expr="//group[field[@name='company_id'] and field[@name='partner_id']]" position="attributes">
+                    <!-- Añadimos el atributo 'invisible' para ocultarlo -->
+                    <attribute name="invisible">1</attribute>
+                </xpath>
+            </field>
+        </record>
+
+
+        <!-- Action Server para filtrar almacenes -->
+        
+
+        <record id="stock.menu_action_warehouse_form" model="ir.ui.menu">
+            <field name="name">Almacenes</field>
+           
+            <field name="groups_id" eval="[(4, ref('stock.group_stock_manager')), (4, ref('prefectura_inventario.group_stock_program_manager'))]"/>
+        </record>
+    </data>
+</odoo>

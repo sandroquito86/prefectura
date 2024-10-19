@@ -1,1 +1,8 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_stock_warehouse_admin_programa,stock.warehouse admin_programa,stock.model_stock_warehouse,prefectura_inventario.group_stock_program_manager,1,1,1,0
+access_stock_location_admin_programa,stock.location admin_programa,stock.model_stock_location,prefectura_inventario.group_stock_program_manager,1,1,1,0
+access_stock_picking_type_admin_programa,stock.picking.type admin_programa,stock.model_stock_picking_type,prefectura_inventario.group_stock_program_manager,1,1,1,0
+access_stock_route_admin_programa,stock.route admin_programa,stock.model_stock_route,prefectura_inventario.group_stock_program_manager,1,1,1,0
+access_stock_rule_admin_programa,stock.rule admin_programa,stock.model_stock_rule,prefectura_inventario.group_stock_program_manager,1,1,1,0
+
+
