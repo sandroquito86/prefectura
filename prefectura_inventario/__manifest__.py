@@ -22,11 +22,13 @@ Long description of module's purpose
 
     # always loaded
     'data': [
-        'security/ir.model.access.csv',
-         'data/stock_grupos.xml',        
+        'data/stock_grupos.xml',      
+        'security/ir.model.access.csv',          
         'data/regla_almacen.xml',
         'views/stock_menu_view.xml',
+         'views/stock/stock_ajustes.xml',
         'views/stock/stock_almacen_view.xml',
+        'views/stock/stock_ubicaciones_view.xml',
 
 
 
