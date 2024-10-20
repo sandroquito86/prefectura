@@ -15,6 +15,8 @@
             </field>
         </record>
 
+      
+
 
         <record id="action_filter_warehouses_by_program" model="ir.actions.server">
             <field name="name">Ver Almacenes</field>

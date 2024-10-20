@@ -130,7 +130,7 @@ class NombreEquipo(models.Model):
         if self.user_has_groups('prefectura_equipos.grupo_equipos_administrador_general') or self.user_has_groups('prefectura_equipos.group_tecnico_general'):
             _condicion = [(1,'=',1)]            
         elif self.user_has_groups('prefectura_equipos.group_tecnico_reparto'):
-            grupos = self.env['asset.permiso_acceso'].search([('reparto_id','=',self.env.user.company_id.id)]).grupo_id
+            grupos = self.env['asset.permiso_acceso'].search([('programa_id','=',self.env.user.company_id.id)]).grupo_id
             categoria = self.env['asset.permiso_acceso'].search([('grupo_id','in',grupos.ids)]).categoria_ids
             _condicion = [('categoria_id','in',categoria.ids)]        
         diccionario= {

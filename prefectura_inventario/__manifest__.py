@@ -26,9 +26,13 @@ Long description of module's purpose
         'security/ir.model.access.csv',          
         'data/regla_almacen.xml',
         'views/stock_menu_view.xml',
-         'views/stock/stock_ajustes.xml',
+        'views/stock/stock_setting_view.xml',  
+        'views/stock/stock_configuracion_producto_view.xml',        
+        'views/stock/stock_ajustes.xml',
         'views/stock/stock_almacen_view.xml',
         'views/stock/stock_ubicaciones_view.xml',
+        'views/stock/stock_tipo_operacion.xml',
+         'views/stock/stock_regla_almacenamiento_view.xml',
 
 
 

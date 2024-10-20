@@ -86,7 +86,7 @@ class ReportMisActivos(models.AbstractModel):
         for activo in activos:
             res.append({                
                 'name':activo.name,
-                'reparto_id':activo.reparto_id.name,
+                'programa_id':activo.programa_id.name,
                 'empleado_id':activo.empleado_id.name,
                 'asset_number':activo.asset_number,                             
             })

@@ -31,7 +31,7 @@ class ValorCaracteristica(models.Model):
     _order = 'caracteristica_id, sequence, id'
     _description = 'Valores de las Características'
 
-    name = fields.Char(string='Value', required=True, translate=True)
+    name = fields.Char(string='Valor', required=True, translate=True)
     sequence = fields.Integer(string='Sequence', index=True)
     caracteristica_id = fields.Many2one('pg_equipos.catalogo_caracteristica', string="Valor", ondelete='restrict', index=True,)
     

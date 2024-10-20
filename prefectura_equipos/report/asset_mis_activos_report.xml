@@ -53,7 +53,7 @@
                         <div class="footer">
                             <table class="o_event_table table table-striped">
                                 <tr align="center">
-                                    <!-- <t t-foreach="request.env['res.company'].search([])" t-as="obj1"> -->
+                                    <!-- <t t-foreach="request.env['pf.programas'].search([])" t-as="obj1"> -->
                                     <th style="font-size: 14px !important;font-weight: bold;text-transform: uppercase;">JEFE DPTO. OPERACIONES DEL <span t-esc="request.env.user.company_id.name"/>
                                     </th>
                                     <th></th>

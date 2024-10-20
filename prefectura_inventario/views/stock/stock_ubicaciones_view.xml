@@ -19,12 +19,12 @@
                            <field name="adm"/>
                           <field name="programa_id" options="{'no_create': True, 'no_open': True, 'no_create_edit': True}" readonly="not adm" force_save="1"/>
                           <field name="location_id_domain"/>
-                         <field name="location_id" />
+                         <field name="location_id" options="{'domain_field': 'location_id_domain', 'no_create_edit': True, 'no_open': True,'no_create': True}" />
                         </group>
                         <group>
                             <group string="Additional Information" name="additional_info">
                                 <field name="active" invisible="1"/>
-                                <field name="usage" string="prueba"/>
+                                <field name="usage"/>
                                 <field name="storage_category_id" invisible="usage != 'internal'" groups="stock.group_stock_storage_categories"/>
                                 <field name="company_id" groups="base.group_multi_company" options="{'no_create': True}"/>
                                 <field name="scrap_location" invisible="usage not in ('inventory', 'internal')"/>

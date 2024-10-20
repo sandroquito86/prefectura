@@ -9,9 +9,9 @@ class StockLocation(models.Model):
     adm = fields.Boolean(string='Administrador', compute='_compute_administrador')
     location_id_domain = fields.Char ( compute = "_compute_location_id_domain" , readonly = True, store = False, )
     location_id = fields.Many2one(
-        'stock.location', 'pruena', index=True, ondelete='cascade', check_company=True,
-        domain="location_id_domain",
-    )
+        'stock.location', 'Parent Location', index=True, ondelete='cascade', check_company=True,
+        help="The parent location that includes this location. Example : The 'Dispatch Zone' is the 'Gate 1' parent location.")
+  
 
 
     @api.depends('programa_id')

@@ -1,0 +1,17 @@
+14/OCT
+    analisis de modulo hospitalario para atencion medica 5 horas
+15/OCT
+    analisis del modulo de inventario 5 horas
+16/OCT
+    Se crea a partir de los programas los almacenes, ubicaciones y tipos de operaciones
+    se crea las reglas de registro para las operaciones
+    Se crea reporte por programa
+
+18/OCT
+     se crea grupo para administrador de programa
+     se realiza modificaciones a los modelos de stock para que contengan el id de programa_id
+     se modifica funcionalidad de almacenes para verlos segun su perfil
+19-OCT
+    Se modifica funcionalidad de tipo de operaciones para verlos segun el perfil
+    Se oculta reglas de almacenamiento y menu ajustes
+    Se verifica funcionalidad de modulo de equipos

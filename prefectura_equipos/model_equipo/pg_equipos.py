@@ -11,9 +11,12 @@ class Equipos(models.Model):
     _inherit = [ 'mail.thread', 'mail.activity.mixin']
         
    
-             
+    
+    name = fields.Char(string='Nombre del Equipo', required=True)
+    warranty_start_date = fields.Date('Inicio de Garantía', tracking=True)
+    start_date = fields.Date('Fecha de puesta en producción', tracking=True)
     sigla = fields.Char(string='Sigla')  
-    reparto_id = fields.Many2one(string='Reparto', comodel_name='res.company', ondelete='restrict', required=True,
+    programa_id = fields.Many2one(string='Reparto', comodel_name='pf.programas', ondelete='restrict', required=True,
                                  default=lambda s: s.env.company.id) 
     grupo_id = fields.Many2one(string='Grupo', comodel_name='pg_equipos.grupo', required=True, ondelete='restrict', tracking=True, )    
     categoria_id = fields.Many2one(string='Categoria', comodel_name='pg_equipos.categoria', ondelete='restrict', required=True,tracking=True )   
@@ -23,20 +26,15 @@ class Equipos(models.Model):
     image_medium = fields.Binary("Medium-sized image")
     marca_id = fields.Many2one(string='Marca', comodel_name='pg_equipos.marca', ondelete='restrict',required=True, tracking=True)    
     modelo_id = fields.Many2one(string='Modelo', comodel_name='pg_equipos.modelo', ondelete='restrict',required=True, tracking=True)      
-    company_id = fields.Many2one('res.company', 'Company', required=True, default=lambda s: s.env.company.id, index=True,)  
+    company_id = fields.Many2one('pf.programas', 'Company', required=True, default=lambda s: s.env.company.id, index=True,)  
     departamento_id = fields.Many2one(string='Departamento', comodel_name='hr.department', ondelete='restrict', 
-                                      domain="[('company_id','=',reparto_id)]",)
-    empleado_id = fields.Many2one('hr.employee', domain="[('company_id','!=',False),('company_id','=',reparto_id)]", string='Responsable del Activo', required=True, tracking=True)                                                                                                
+                                      domain="[('company_id','=',programa_id)]",)
+    empleado_id = fields.Many2one('hr.employee', domain="[('company_id','!=',False),('company_id','=',programa_id)]", string='Responsable del Activo', required=True, tracking=True)                                                                                                
     user_id = fields.Many2one('res.users', 'Usuario', related='empleado_id.user_id', readonly=True, store=True,)       
     estado_id = fields.Selection(string='Estado', selection=[('op', 'Operativo'), ('mant', 'Mantenimiento'),('op_lim_men', 'Operativo con limitaciones menores'),
                                                              ('op_lim_may', 'Operativo con limitaciones mayores'), ('no_op', 'No operativo')],tracking=True)
     detalle_caracteristicas_ids = fields.One2many('pg_equipos.det_caracteristica', 'pg_equipos_id', 'Características de activos',) 
-    #MODIFICACION DE CAMPOS EXISTENTES       
-    CRITICALITY_SELECTION = [('0', 'General'), ('1', 'Importante'), ('2', 'Muy Importante'), ('3', 'Critico'), ]
-    name = fields.Char(string="Descripcion", required=False, compute='_concatenar_nombre_activo', store=True) 
-    criticality = fields.Selection(CRITICALITY_SELECTION, 'Criticidad',default="0", tracking=True)           
-    active = fields.Boolean('Activo/Inactivo', default=True, )
-    start_date = fields.Date('Fecha de inicio', tracking=True)
+    #MODIFICACION DE CAMPOS EXISTENTES       @api.model
     warranty_start_date = fields.Date('Inicio de Garantía', tracking=True)
     purchase_date = fields.Date('Fecha de Adquisiciòn', required=True, tracking=True )
     warranty_end_date = fields.Date('Fin de Garantía', tracking=True)  
@@ -125,8 +123,8 @@ class Equipos(models.Model):
       self.modelo_id = False       
       
      
-    @api.onchange('reparto_id')
-    def _onchange_reparto_id(self):
+    @api.onchange('programa_id')
+    def _onchange_programa_id(self):
         self.empleado_id = False
               
     @api.model
@@ -144,7 +142,7 @@ class Equipos(models.Model):
         if self.user_has_groups('prefectura_equipos.grupo_equipos_administrador_general') or self.user_has_groups('prefectura_equipos.grupo_equipos_registrador_general'):
           _condicion = [(1,'=',1)]
         elif self.user_has_groups('prefectura_equipos.grupo_equipos_registrador_sucursal'):
-          _condicion = [('reparto_id','=',self.env.user.company_id.id)]  
+          _condicion = [('programa_id','=',self.env.user.company_id.id)]  
         
         diccionario= {
                         'name': ('Ingreso de Activos'),        
@@ -163,9 +161,9 @@ class Equipos(models.Model):
         if self.user_has_groups('prefectura_equipos.grupo_equipos_administrador_general') or self.user_has_groups('prefectura_equipos.group_tecnico_general'):
           _condicion = [(1,'=',1)]
         elif self.user_has_groups('prefectura_equipos.group_tecnico_reparto'):
-          grupos = self.env['pg_equipos.permiso_acceso'].search([('reparto_id','=',self.env.user.company_id.id)]).grupo_id
+          grupos = self.env['pg_equipos.permiso_acceso'].search([('programa_id','=',self.env.user.company_id.id)]).grupo_id
           categoria = self.env['pg_equipos.permiso_acceso'].search([('grupo_id','in',grupos.ids)]).categoria_ids
-          _condicion = [('reparto_id','=',self.env.user.company_id.id),('grupo_id','=',grupos.ids),('categoria_id','=',categoria.ids)]          
+          _condicion = [('programa_id','=',self.env.user.company_id.id),('grupo_id','=',grupos.ids),('categoria_id','=',categoria.ids)]          
         diccionario= {
                         'name': ('Características Específicas y Componentes'),        
                         'domain': _condicion,

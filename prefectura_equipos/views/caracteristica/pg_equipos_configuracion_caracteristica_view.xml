@@ -27,7 +27,7 @@
                         <field name="caracteristica_ids" nolabel="1">
                             <tree limit="10" widget="one2many" editable="bottom">
                                 <field name="caracteristica_id_domain" column_invisible="True" />
-                                <field name="caracteristica_id" options="{'domain_field': 'config_caracteristica_activo_id', 'no_create_edit': True, 'no_open': True,'no_create': True}"/>
+                                <field name="caracteristica_id" options="{'domain_field': 'caracteristica_id_domain', 'no_create_edit': True, 'no_open': True,'no_create': True}"/>
                                 <field name="es_obligatorio" />
                             </tree>
                             <form>
