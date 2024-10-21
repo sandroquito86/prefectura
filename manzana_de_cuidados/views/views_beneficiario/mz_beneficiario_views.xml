@@ -29,7 +29,7 @@
         <div class="oe_button_box" name="button_box">
             <button name="action_view_asistencia_servicio" type="object" class="oe_stat_button" icon="fa-braille">
                 <div class="o_stat_info">
-                    <field name="consulta_count" class="o_stat_value"/>
+                    <field name="asis_servicio_count" class="o_stat_value"/>
                     <span class="o_stat_text">Servicios Recibidos</span>
                 </div>
             </button>

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError
 from string import ascii_letters, digits
 import string
 
@@ -47,7 +47,7 @@ class AsignarServicio(models.Model):
                 ('id', '!=', record.id),  # Excluye el registro actual para permitir actualizaciones
             ]
             if self.search_count(domain) > 0:
-                raise ValidationError("El servicio no puede estar duplicado en el mismo programa.")
+                raise UserError("El servicio no puede estar duplicado en el mismo programa.")
 
     @api.depends('programa_id')
     def _compute_domain_personal_ids(self):

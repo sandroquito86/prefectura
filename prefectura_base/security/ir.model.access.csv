@@ -21,4 +21,6 @@ access_pf_programas,access_pf_programas,model_pf_programas,group_administrador,1
 access_res_country_ciudad,access_res_country_ciudad,model_res_country_ciudad,group_administrador,1,1,1,1
 access_res_country_parroquia,access_res_country_parroquia,model_res_country_parroquia,group_administrador,1,1,1,1
 
+access_pf_cie10,access_pf_cie10,model_pf_cie10,group_administrador,1,1,1,1
+
 

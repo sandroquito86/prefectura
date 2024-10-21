@@ -3,16 +3,20 @@ from odoo import models, fields, api
 from datetime import date
 from dateutil.relativedelta import relativedelta
 from random import randint
+from datetime import datetime
+from odoo.exceptions import UserError
+import pytz
 
 class Consulta(models.Model):
     _name = 'mz.consulta'
     _description = 'Consulta Médica'
     _inherit = ['mail.thread', 'mail.activity.mixin']
     _rec_name = 'codigo'
+    _order = 'fecha desc, hora desc'
 
     codigo = fields.Char(string='Código', readonly=True, store=True)
     fecha = fields.Date(string='Fecha', required=True, tracking=True)
-    hora = fields.Float(string='Hora', required=True, tracking=True, compute='_compute_hora')
+    hora = fields.Float(string='Hora', required=True, tracking=True, compute='_compute_hora', store=True)
     beneficiario_id = fields.Many2one(string='Beneficiario', comodel_name='mz.beneficiario', ondelete='restrict', tracking=True, required=True)
     programa_id = fields.Many2one('pf.programas', string='Programa', required=True, default=lambda self: self.env.programa_id)
     servicio_id = fields.Many2one(string='Servicio', comodel_name='mz.asignacion.servicio', ondelete='restrict', domain="[('programa_id', '=?', programa_id)]")
@@ -58,7 +62,16 @@ class Consulta(models.Model):
     proxima_cita = fields.Date(string='Próxima Cita', tracking=True)
 
     historia_clinica_id = fields.Many2one('mz.historia.clinica', string='Historia Clínica', readonly=True)
+
+    cie10_id = fields.Many2one('pf.cie10', string='Diagnóstico CIE-10', tracking=True)
+
+    receta_ids = fields.One2many('mz.receta.linea', 'consulta_id', string='Receta Médica')
+    picking_id = fields.Many2one('stock.picking', string='Orden de Entrega', readonly=True)
     
+    _sql_constraints = [
+        ('codigo_unique', 'unique(codigo)', 'El código de la consulta debe ser único.')
+    ]
+
     @api.model
     def default_get(self, fields_list):
         defaults = super(Consulta, self).default_get(fields_list)
@@ -75,6 +88,13 @@ class Consulta(models.Model):
             defaults['genero'] = beneficiario.genero
             defaults['fecha_nacimiento'] = beneficiario.fecha_nacimiento
         
+             # Obtener el registro más reciente de mz.consulta para el beneficiario
+            consulta_reciente = self.search([('beneficiario_id', '=', beneficiario.id)], order='fecha desc, hora desc', limit=1)
+            if consulta_reciente:
+                defaults['antecedentes_personales'] = consulta_reciente.antecedentes_personales
+                defaults['antecedentes_familiares'] = consulta_reciente.antecedentes_familiares
+                defaults['alergias'] = consulta_reciente.alergias
+                defaults['medicamentos_actuales'] = consulta_reciente.medicamentos_actuales
         return defaults
 
     @api.depends('fecha_nacimiento')
@@ -90,7 +110,10 @@ class Consulta(models.Model):
     @api.depends('fecha')
     def _compute_hora(self):
         for record in self:
-            record.hora = randint(0, 23) + randint(0, 59) / 100
+            user_tz = self.env.user.tz or 'UTC'  # Obtiene la zona horaria del usuario o usa 'UTC' por defecto
+            local_tz = pytz.timezone(user_tz)
+            ahora = datetime.now(pytz.utc).astimezone(local_tz)  # Convierte la hora actual a la zona horaria del usuario
+            record.hora = ahora.hour + ahora.minute / 60.0
 
     @api.depends('peso', 'altura')
     def _compute_imc(self):
@@ -105,6 +128,7 @@ class Consulta(models.Model):
     def create(self, vals):
         if not vals.get('codigo'):
             vals['codigo'] = self.env['ir.sequence'].next_by_code('mz.consulta.sequence') or 'Nuevo'
+        self.env['mz.asistencia_servicio'].search([('codigo', '=', vals['codigo'])]).write({'atendido': True})
         return super(Consulta, self).create(vals)
     
     
@@ -127,8 +151,13 @@ class Consulta(models.Model):
                 'fecha': consulta.fecha,
                 'motivo_consulta': consulta.motivo_consulta,
                 'diagnostico': consulta.diagnostico,
+                'cie10_id': consulta.cie10_id.id,
                 'tratamiento': consulta.tratamiento,
                 'observaciones': consulta.observaciones,
+                'antecedentes_personales': consulta.antecedentes_personales,
+                'antecedentes_familiares': consulta.antecedentes_familiares,
+                'alergias': consulta.alergias,
+                'medicamentos_actuales': consulta.medicamentos_actuales,
                 'signos_vitales': f"PA: {consulta.presion_arterial}, FC: {consulta.frecuencia_cardiaca}, FR: {consulta.frecuencia_respiratoria}, Temp: {consulta.temperatura}"
             })
             consulta.historia_clinica_id = historia_clinica.id
@@ -140,6 +169,59 @@ class Consulta(models.Model):
                     'motivo_consulta': consulta.motivo_consulta,
                     'diagnostico': consulta.diagnostico,
                     'tratamiento': consulta.tratamiento,
+                    'cie10_id': consulta.cie10_id.id,
                     'observaciones': consulta.observaciones,
+                    'antecedentes_personales': consulta.antecedentes_personales,
+                    'antecedentes_familiares': consulta.antecedentes_familiares,
+                    'alergias': consulta.alergias,
+                    'medicamentos_actuales': consulta.medicamentos_actuales,
                     'signos_vitales': f"PA: {consulta.presion_arterial}, FC: {consulta.frecuencia_cardiaca}, FR: {consulta.frecuencia_respiratoria}, Temp: {consulta.temperatura}"
                 })
+
+    def generar_orden_entrega(self):
+        self.ensure_one()
+        if self.picking_id:
+            raise UserError('Ya existe una orden de entrega para esta consulta.')
+
+        productos_en_stock = self.receta_ids.filtered(lambda r: r.en_inventario)
+        
+        if productos_en_stock:
+            picking_type = self.env['stock.picking.type'].search([('code', '=', 'outgoing')], limit=1)
+            if not picking_type:
+                raise UserError('No se encontró un tipo de operación para salida de inventario.')
+
+            valores_picking = {
+                'partner_id': self.beneficiario_id.user_id.partner_id.id,
+                'picking_type_id': picking_type.id,
+                'location_id': picking_type.default_location_src_id.id,
+                'location_dest_id': picking_type.default_location_dest_id.id,
+                'origin': f'Consulta {self.codigo}',
+            }
+
+            picking = self.env['stock.picking'].create(valores_picking)
+
+            for linea in productos_en_stock:
+                self.env['stock.move'].create({
+                    'name': linea.producto_id.name,
+                    'product_id': linea.producto_id.id,
+                    'product_uom_qty': linea.cantidad,
+                    'product_uom': linea.producto_id.uom_id.id,
+                    'picking_id': picking.id,
+                    'location_id': picking.location_id.id,
+                    'location_dest_id': picking.location_dest_id.id,
+                })
+
+            self.picking_id = picking.id
+            return True
+        else:
+            return {
+                'type': 'ir.actions.client',
+                'tag': 'display_notification',
+                'params': {
+                    'title': 'Información',
+                    'message': 'No se generó orden de entrega ya que no hay productos en stock.',
+                    'type': 'warning',
+                    'sticky': False,
+                }
+            }
+    

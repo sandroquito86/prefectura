@@ -35,10 +35,19 @@
                             <group>
                                 <field name="motivo_consulta" readonly="1"/>
                                 <field name="diagnostico" readonly="1"/>
+                                <field name="cie10_id" readonly="1" options="{'no_create': True, 'no_open': True}" />
                                 <field name="tratamiento" readonly="1"/>
                                 <field name="observaciones" readonly="1"/>
                             </group>
                         </page>
+                        <page string="Historial Antecedente Médico">
+                                <group>
+                                    <field name="antecedentes_personales" placeholder="Antecedentes médicos personales del paciente"/>
+                                    <field name="antecedentes_familiares" placeholder="Antecedentes médicos familiares relevantes"/>
+                                    <field name="alergias" placeholder="Alergias conocidas del paciente"/>
+                                    <field name="medicamentos_actuales" placeholder="Medicamentos que el paciente toma actualmente"/>
+                                </group>
+                            </page>
                     </notebook>
                 </sheet>
             </form>

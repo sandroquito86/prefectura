@@ -87,8 +87,8 @@
               </group>
               <searchpanel>
                     <field name="programa_id" icon="fa-building" string="Programa"/>
-                    <field name="servicio_id" icon="fa-headphones" string="Servicio"/>
-                    <field name="personal_id" icon="fa-users" string="Persona" select="multi" hierarchize="false"/>
+                    <field name="servicio_id" icon="fa-cogs" string="Servicio"/>
+                    <field name="personal_id" icon="fa-user-md" string="Persona" select="multi" hierarchize="false"/>
                 </searchpanel>
           </search>
       </field>

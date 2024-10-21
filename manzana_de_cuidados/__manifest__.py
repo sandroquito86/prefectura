@@ -18,7 +18,7 @@ Long description of module's purpose
     'version': '0.1',
 
     # any module necessary for this one to work correctly
-    'depends': ['hr','base','mail','prefectura_base','website_slides'],
+    'depends': ['hr','base','mail', 'stock','prefectura_base','website_slides'],
 
     # always loaded
     'data': [
@@ -49,10 +49,17 @@ Long description of module's purpose
         
         'views/wizard/mz_wizard_quitar_publicacion_programa.xml',
     ],
+    'assets': {
+        'web.assets_backend': [
+            'manzana_de_cuidados/static/src/js/widget_fecha.js',
+        ],
+    },
     # only loaded in demonstration mode
     'demo': [
         'demo/demo.xml',
     ],
+    
+
      'installable': True,
     'application': True,
     'auto_install': False,

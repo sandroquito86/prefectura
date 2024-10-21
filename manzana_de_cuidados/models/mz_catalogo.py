@@ -5,7 +5,7 @@
 
 #
 ##############################################################################
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError
 from odoo import models, fields, api
 from string import ascii_letters, digits, whitespace
 
@@ -45,5 +45,5 @@ class Items(models.Model):
             model_ids = record.search([('id', '!=',record.id),('catalogo_id', '=',record.catalogo_id.id)])        
             list_names = [x.name.upper() for x in model_ids if x.name]        
             if record.name.upper() in list_names:
-                raise ValidationError("Ya existe items: %s , no se permiten valores duplicados dentro del mismo catálogo" % (record.name.upper()))    
+                raise UserError("Ya existe items: %s , no se permiten valores duplicados dentro del mismo catálogo" % (record.name.upper()))    
  

@@ -1,4 +1,4 @@
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError
 from odoo import models, fields, api
 import re
 from datetime import date
@@ -79,7 +79,7 @@ class MzSolicitudBeneficiario(models.Model):
     def action_approve(self):
         for record in self:
             if self.env['mz.beneficiario'].search([('numero_documento', '=', record.numero_documento)]):
-                    raise ValidationError("Ya existe un beneficiario con esta identificación.")
+                    raise UserError("Ya existe un beneficiario con esta identificación.")
             beneficiario = self.env['mz.beneficiario'].create({
                 'name': record.name,
                 'apellido_paterno': record.apellido_paterno,
@@ -126,12 +126,12 @@ class MzSolicitudBeneficiario(models.Model):
     @api.model
     def create(self, vals):
         if self.env['mz.solicitud.beneficiario'].search([('numero_documento', '=', vals.get('numero_documento'))]):
-            raise ValidationError("Ya existe una solicitud de beneficiario con esta identificación.")
+            raise UserError("Ya existe una solicitud de beneficiario con esta identificación.")
         return super(MzSolicitudBeneficiario, self).create(vals)
 
     def write(self, vals):
         if 'numero_documento' in vals:
             for record in self:
                 if self.env['mz.solicitud.beneficiario'].search([('numero_documento', '=', vals.get('numero_documento')), ('id', '!=', record.id)]):
-                    raise ValidationError("Ya existe una solicitud de beneficiario con esta identificación.")
+                    raise UserError("Ya existe una solicitud de beneficiario con esta identificación.")
         return super(MzSolicitudBeneficiario, self).write(vals)

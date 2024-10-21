@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError
 from odoo import models, fields, api
 import re
 from .. import utils
@@ -18,11 +18,21 @@ class Beneficiario(models.Model):
     
     historia_clinica_ids = fields.One2many('mz.historia.clinica', 'beneficiario_id', string='Historias Clínicas')
     consulta_count = fields.Integer(string='Número de Consultas', compute='_compute_consulta_count')
+    aistencia_servicio_ids = fields.One2many('mz.asistencia_servicio', 'beneficiario_id', string='Servicios recibidos')
+    asis_servicio_count = fields.Integer(string='Número de Servicios', compute='_compute_asis_servicios_count')
 
     @api.depends('historia_clinica_ids')
     def _compute_consulta_count(self):
         for beneficiario in self:
             beneficiario.consulta_count = len(beneficiario.historia_clinica_ids)
+
+    @api.depends('aistencia_servicio_ids')
+    def _compute_asis_servicios_count(self):
+        for beneficiario in self:
+             # Filtra los registros que están en el estado deseado
+            estado = 'si'  # Reemplaza con el estado que deseas filtrar
+            registros_filtrados = [registro for registro in beneficiario.aistencia_servicio_ids if registro.asistio == estado]
+            beneficiario.asis_servicio_count = len(registros_filtrados)
     
 
     @api.onchange('email')
@@ -62,12 +72,12 @@ class Beneficiario(models.Model):
         for record in self:
             if record.tipo_documento == 'dni':
                 if not utils.validar_cedula(record.numero_documento):
-                    raise ValidationError("El número de cédula ingresado no es válido.")
+                    raise UserError("El número de cédula ingresado no es válido.")
                 
     @api.model
     def create(self, vals):
         if self.env['mz.beneficiario'].search([('numero_documento', '=', vals.get('numero_documento'))]):
-            raise ValidationError("Ya existe un beneficiario con esta identificación.")
+            raise UserError("Ya existe un beneficiario con esta identificación.")
         # Buscar si ya existe un beneficiario con el mismo número de documento
         numero_documento = vals.get('numero_documento')
         tipo_documento = vals.get('tipo_documento')
@@ -97,7 +107,7 @@ class Beneficiario(models.Model):
         if 'numero_documento' in vals:
             for record in self:
                 if self.env['mz.beneficiario'].search([('numero_documento', '=', vals.get('numero_documento')), ('id', '!=', record.id)]):
-                    raise ValidationError("Ya existe un beneficiario con esta identificación.")
+                    raise UserError("Ya existe un beneficiario con esta identificación.")
         return super(Beneficiario, self).write(vals)
 
     @api.constrains('numero_documento', 'tipo_documento')
@@ -109,7 +119,7 @@ class Beneficiario(models.Model):
                 ('id', '!=', record.id)
             ])
             if existing:
-                raise ValidationError("Ya existe un beneficiario con este número y tipo de documento.")
+                raise UserError("Ya existe un beneficiario con este número y tipo de documento.")
     
 
     def crear_user(self):

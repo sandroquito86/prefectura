@@ -13,6 +13,12 @@ class HistoriaClinica(models.Model):
     tratamiento = fields.Text(string='Tratamiento')
     observaciones = fields.Text(string='Observaciones')
     signos_vitales = fields.Text(string='Signos Vitales')
+    cie10_id = fields.Many2one('pf.cie10', string='Diagnóstico CIE-10', tracking=True)
+    # Historial de antecedentes médico
+    antecedentes_personales = fields.Text(string='Antecedentes Personales', tracking=True)
+    antecedentes_familiares = fields.Text(string='Antecedentes Familiares', tracking=True)
+    alergias = fields.Text(string='Alergias', tracking=True)
+    medicamentos_actuales = fields.Text(string='Medicamentos Actuales', tracking=True)
 
     def name_get(self):
         return [(record.id, f"Historia Clínica - {record.beneficiario_id.name} - {record.fecha}") for record in self]

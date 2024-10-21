@@ -9,8 +9,12 @@
     <field name="model">mz.agendar_servicio</field>
     <field name="arch" type="xml">
       <tree string="Agendar Servicio">
-        <field name="modulo_id"/>
         <field name="beneficiario_id"/>
+        <field name="fecha_solicitud"/>
+        <field name="horario_id"/>
+        <field name="personal_id"/>
+        <field name="servicio_id"/>
+        <field name="programa_id"/>
       </tree>
     </field>
   </record>
@@ -65,7 +69,7 @@
               <field name="personal_id_domain" invisible="1" />
               <field name="personal_id" readonly="state != 'borrador'" options="{'domain_field': 'personal_id_domain', 'no_create_edit': True, 'no_open': True,'no_create': True}"/>
               <field name="horario_id_domain" invisible="1"/>
-              <field name="fecha_solicitud" readonly="state != 'borrador'" />
+              <field name="fecha_solicitud" required="1" readonly="state != 'borrador'" />
               <field name="horario_id" readonly="not (fecha_solicitud and personal_id and servicio_id) or state != 'borrador'" force_save="1" options="{'domain_field': 'horario_id_domain', 'no_create_edit': True, 'no_open': True,'no_create': True}"/>
             </group>
             <group>
@@ -107,7 +111,7 @@
                 <searchpanel>
                     <field name="programa_id" icon="fa-building" string="Programa"/>
                     <field name="servicio_id" icon="fa-cogs" string="Servicio"/>
-                    <field name="personal_id" icon="fa-users" string="Persona" select="multi" hierarchize="false"/>
+                    <field name="personal_id" icon="fa-user-md" string="Persona" select="multi" hierarchize="false"/>
                 </searchpanel>
             </search>
         </field>
@@ -122,7 +126,7 @@
   </record>
 
   <!-- Menu item -->
-  <menuitem id="menu_action_mz_agendar_servicio" name="Agendar Servicio" parent="menu_mz_ejecucion" action="action_mz_agendar_servicio"/>
+  <menuitem id="menu_action_mz_agendar_servicio" name="Agendar Servicio" parent="menu_mz_ejecucion" action="action_mz_agendar_servicio" sequence="10"/>
 
 
 </odoo>

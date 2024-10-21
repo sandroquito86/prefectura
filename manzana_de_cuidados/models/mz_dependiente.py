@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError
 from odoo import models, fields, api
 import re
 from random import randint

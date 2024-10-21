@@ -3,7 +3,7 @@
 from logging.config import valid_ident
 import string
 from odoo import models, fields, api
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError
 from babel.dates import format_date
 # from datetime import datetime,time, datetime
 import datetime
@@ -77,19 +77,19 @@ class GenerarHorarios(models.Model):
     def _check_detalle_generahorario(self):
         for record in self:
             if not (record.turno_disponibles_ids):
-                raise ValidationError("No se puede guardar AGENDA sino genera detalle de Agenda!!")
+                raise UserError("No se puede guardar AGENDA sino genera detalle de Agenda!!")
 
     @api.constrains('servicio_id', 'personal_id')
     def _check_espe_doc_unid(self):
         for record in self:
             if not (record.servicio_id) or not (record.personal_id):
-                raise ValidationError("Debe seleccionar UNIDAD MEDICA - ESPECIALIDAD Y MEDICO!!")
+                raise UserError("Debe seleccionar UNIDAD MEDICA - ESPECIALIDAD Y MEDICO!!")
 
     @api.constrains('mes_genera')
     def _check_mes_genera(self):
         for record in self:
             if not (record.mes_genera):
-                raise ValidationError("Debe elegir el MES A GENERAR!!")
+                raise UserError("Debe elegir el MES A GENERAR!!")
             
     @api.onchange('anio')
     def _onchange_anio(self):
@@ -97,7 +97,7 @@ class GenerarHorarios(models.Model):
             #capturame el año actual en una variable
             anio_actual = time.strftime('%Y')
             if anio_actual > record.anio:
-                raise ValidationError("El año a generar no puede ser menor al año actual!!")
+                raise UserError("El año a generar no puede ser menor al año actual!!")
 
     @api.onchange('servicio_id')
     def _onchange_servicio_id(self):
@@ -132,7 +132,7 @@ class GenerarHorarios(models.Model):
             record.turno_disponibles_ids = False
             horarios = self.env['mz.horarios.servicio'].search([('servicio_id', '=', record.servicio_id.id), ('personal_id', '=', record.personal_id.id)],limit=1)
             if not horarios:
-                raise ValidationError("No se ha registrado horarios para este empleado en este servicio!!")
+                raise UserError("No se ha registrado horarios para este empleado en este servicio!!")
             mes = int(record.mes_genera)
             anio = int(record.anio)
             dias = record.obtener_dias_del_mes(mes, anio)
@@ -144,7 +144,7 @@ class GenerarHorarios(models.Model):
                     fecha_asignar = datetime.datetime.strptime(
                         text, "%Y-%m-%d")
                     ultimo_dia_asignar = fecha_asignar.weekday()
-                    #raise ValidationError("a {}".format(ultimo_dia_asignar))
+                    #raise UserError("a {}".format(ultimo_dia_asignar))
                     horas_dia = self.env['mz.detalle.horarios'].search([('asignacion_horario_id', '=', horario.id), ('dias', '=', ultimo_dia_asignar)])                    
                     if horas_dia:
                         for horas in horas_dia:
@@ -157,9 +157,9 @@ class GenerarHorarios(models.Model):
                             h2, m2 = divmod(hf, 60)
                             duracion = horas.duracionconsulta
                             # ahora si estamos
-                            #raise ValidationError("si estamos {}".format(horas))
+                            #raise UserError("si estamos {}".format(horas))
                             hora = '%02d:%02d-%02d:%02d' % (h1, m1, h2, m2)
-                            #raise ValidationError("h1 {} m1 {} h2 {} m2 {}".format(h1, m1, h2, m2))
+                            #raise UserError("h1 {} m1 {} h2 {} m2 {}".format(h1, m1, h2, m2))
                             while round(hora_ini + duracion, 2) <= round(horafin, 2):
                                 record.turno_disponibles_ids = [(0, 0, {'fecha': fecha_asignar, 'horainicio': hora_ini, 'horafin': hora_ini +
                                                                    duracion, 'hora': hora, 'maximo_beneficiarios': maximo_beneficiarios})]
@@ -173,9 +173,9 @@ class GenerarHorarios(models.Model):
             if (record.mes_genera):
                 if record.anio:
                     self.action_generar_horas()
-                    #raise ValidationError("a")
+                    #raise UserError("a")
                 else:
-                    raise ValidationError("Debe registrar el año a generar!!")
+                    raise UserError("Debe registrar el año a generar!!")
             else:
                 record.turno_disponibles_ids = False
 

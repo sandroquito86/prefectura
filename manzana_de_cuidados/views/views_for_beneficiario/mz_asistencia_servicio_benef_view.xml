@@ -68,7 +68,7 @@
                 </group>
                 <searchpanel>
                     <field name="servicio_id" icon="fa-cogs" string="Servicio"/>
-                    <field name="personal_id" icon="fa-users" string="Empleado" select="multi" hierarchize="false"/>
+                    <field name="personal_id" icon="fa-user_md" string="Empleado" select="multi" hierarchize="false"/>
                 </searchpanel>
             </search>
         </field>

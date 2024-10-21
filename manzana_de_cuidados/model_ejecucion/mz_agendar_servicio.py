@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError
 from datetime import datetime
+from datetime import date
 
 
 class AgendarServicio(models.Model):
@@ -59,7 +60,7 @@ class AgendarServicio(models.Model):
                 ('id', '!=', record.id)
             ])            
             if existing:
-                raise ValidationError("El beneficiario ya ha solicitado este horario.")       
+                raise UserError("El beneficiario ya ha solicitado este horario.")       
             
     @api.constrains('horario_id', 'beneficiario_id')
     def _check_horario_capacity(self):
@@ -72,7 +73,7 @@ class AgendarServicio(models.Model):
                 
                 # Verificar si se excede la capacidad máxima
                 if asistencias_count >= record.horario_id.maximo_beneficiarios:
-                    raise ValidationError(f"El horario seleccionado ya ha alcanzado su capacidad máxima de {record.horario_id.maximo_beneficiarios} beneficiarios.")
+                    raise UserError(f"El horario seleccionado ya ha alcanzado su capacidad máxima de {record.horario_id.maximo_beneficiarios} beneficiarios.")
 
             
                 
@@ -164,7 +165,7 @@ class AgendarServicio(models.Model):
                 ('planificacion_id', '=', record.horario_id.id)
             ])
             if asistencias_count >= record.horario_id.maximo_beneficiarios:
-                raise ValidationError(f"No se puede aprobar. El horario ya ha alcanzado su capacidad máxima de {record.horario_id.maximo_beneficiarios} beneficiarios.")
+                raise UserError(f"No se puede aprobar. El horario ya ha alcanzado su capacidad máxima de {record.horario_id.maximo_beneficiarios} beneficiarios.")
             
             record.state = 'aprobado'
             if record.horario_id and record.beneficiario_id:
@@ -176,7 +177,7 @@ class AgendarServicio(models.Model):
     def solicitar_horario(self):
         for record in self:
             if not record.horario_id:
-                raise ValidationError("Debe seleccionar un horario.")
+                raise UserError("Debe seleccionar un horario.")
             codigo = self._generate_codigo()
             record.codigo = codigo
             # Verificar nuevamente la capacidad antes de aprobar
@@ -184,12 +185,14 @@ class AgendarServicio(models.Model):
                 ('planificacion_id', '=', record.horario_id.id)
             ])
             if asistencias_count >= record.horario_id.maximo_beneficiarios:
-                raise ValidationError(f"No se puede aprobar. El horario ya ha alcanzado su capacidad máxima de {record.horario_id.maximo_beneficiarios} beneficiarios.")
-            existe_asistencia = self.search([
+                raise UserError(f"No se puede aprobar. El horario ya ha alcanzado su capacidad máxima de {record.horario_id.maximo_beneficiarios} beneficiarios.")
+            existe_asistencia = self.env['mz.asistencia_servicio'].search([
                 ('beneficiario_id', '=', record.beneficiario_id.id),
-                ('horario_id', '=', record.horario_id.id),
-                ('state', 'in', ['solicitud', 'aprobado'])
-            ])
+                ('asistio', '=', 'pendiente'),
+                ('servicio_id', '=', record.servicio_id.id)
+            ],limit=1)
+            if existe_asistencia:
+                raise UserError(f'El beneficiario ya tiene una solicitud pendiente en {existe_asistencia.servicio_id.name} con {existe_asistencia.personal_id.name}. para la fecha {existe_asistencia.fecha}.')
             record.state = 'solicitud'
             if record.horario_id and record.beneficiario_id:
                 self.env['mz.asistencia_servicio'].create({
@@ -202,10 +205,34 @@ class AgendarServicio(models.Model):
                     'codigo': record.codigo,
                 })
 
+    @api.constrains('fecha_solicitud')
+    def _check_date(self):
+        for record in self:
+            if record.fecha_solicitud < fields.Date.today():
+                raise UserError("La fecha no puede ser anterior a la fecha actual.")
+
+    @api.onchange('fecha_solicitud')
+    def _onchange_fecha_valida_solicitud(self):
+        if self.fecha_solicitud  and self.fecha_solicitud < fields.Date.today():
+            self.fecha_solicitud = fields.Date.today()
+            return {
+                'warning': {
+                    'title': "Fecha inválida",
+                    'message': "La fecha ha sido ajustada a la fecha actual."
+                }
+            }
+
     def anular_horario(self):
         for record in self:
-            raise ValidationError("No se puede anular la solicitud. Por favor, contacte al administrador del sistema.")
+            raise UserError("No se puede anular la solicitud. Por favor, contacte al administrador del sistema.")
             record.state = 'anulado'
+
+    def unlink(self):
+        for record in self:
+            if record.state != 'borrador':
+                raise UserError("No se puede eliminar un registro que no esté en estado borrador.")
+        return super(AgendarServicio, self).unlink()
+    
 
 
        

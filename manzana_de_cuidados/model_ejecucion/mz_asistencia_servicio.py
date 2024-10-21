@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from odoo import models, fields, api
-from odoo.exceptions import ValidationError
+from odoo.exceptions import UserError
 from datetime import datetime, timedelta
 
 
@@ -26,7 +26,8 @@ class AsistenciaServicio(models.Model):
 
     _sql_constraints = [
         ('unique_planificacion_beneficiario', 'unique(planificacion_id, beneficiario_id)', 
-         'Ya existe un registro de asistencia para este beneficiario en esta planificación.')]
+         'Ya existe un registro de asistencia para este beneficiario en esta planificación.'),
+         ('unique_codigo', 'unique(codigo)', 'El código de asistencia debe ser único.')]
     
     @api.depends('servicio_id')
     def _compute_tipo_servicio(self):
@@ -35,6 +36,8 @@ class AsistenciaServicio(models.Model):
 
     def action_asistio(self):
         self.asistio = 'si'
+        self.env['mz.agendar_servicio'].search([('codigo', '=', self.codigo)]).write({'state': 'atendido'})
+        
 
     def action_no_asistio(self):
         self.asistio = 'no'
@@ -51,7 +54,7 @@ class PlanificacionServicio(models.Model):
     def _check_maximo_beneficiarios(self):
         for record in self:
             if record.beneficiarios_count > record.maximo_beneficiarios:
-                raise ValidationError(f"No se puede exceder el número máximo de beneficiarios ({record.maximo_beneficiarios}) para este horario.")
+                raise UserError(f"No se puede exceder el número máximo de beneficiarios ({record.maximo_beneficiarios}) para este horario.")
 
     @api.depends('asistencia_ids')
     def _compute_beneficiarios_count(self):
