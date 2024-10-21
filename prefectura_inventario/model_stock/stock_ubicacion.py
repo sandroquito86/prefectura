@@ -64,8 +64,7 @@ class StockLocation(models.Model):
     # obtener el programa asociado a una ubicación.
     def get_programa(self):
         self.ensure_one()
-        if self.programa_id:
-            return self.progra@api.depends('programa_id')
+        return self.programa_id
    
     @api.model
     def create(self, vals):

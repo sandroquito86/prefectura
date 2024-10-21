@@ -5,10 +5,10 @@
         <record id="stock.menu_warehouse_config" model="ir.ui.menu">
             <field name="groups_id" eval="[(6, 0, [ref('stock.group_stock_manager')])]"/>
         </record>
-
-
         <record id="stock.menu_warehouse_config" model="ir.ui.menu">
             <field name="groups_id" eval="[(4, ref('prefectura_inventario.group_stock_program_manager'))]"/>
         </record>
+
+        <menuitem id="menu_pf_inventario_catalogos" name="Catálogos" parent="stock.menu_stock_config_settings" sequence="100"/>
     </data>
 </odoo>

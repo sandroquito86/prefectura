@@ -1,39 +1,27 @@
 from odoo import models, fields, api
 from odoo.exceptions import ValidationError
 
-
 class StockWarehouse(models.Model):
     _inherit = 'stock.warehouse'
 
-    programa_id = fields.Many2one('pf.programas', string='Programa Asociado', ondelete='restrict')    
-    adm = fields.Boolean(string='Administrador', compute='_compute_administrador_programa' )
+    programa_id = fields.Many2one('pf.programas', string='Programa Asociado', ondelete='restrict')
+    adm = fields.Boolean(string='Administrador', compute='_compute_administrador_programa')
     code = fields.Char('Código', size=10)
 
-    
     @api.depends('programa_id')
     def _compute_administrador_programa(self):
         for record in self:
-            user = self.env.user           
+            user = self.env.user
             record.adm = user.has_group('stock.group_stock_manager')
 
-    @api.onchange('programa_id')
-    def onchange_programa_id(self):
-        if self.programa_id:
-            company_warehouse = self.env['stock.warehouse'].search([
-                ('company_id', '=', self.env.company.id),
-                ('id', '!=', self._origin.id)
-            ], limit=1)
-            if company_warehouse:
-                self.resupply_wh_ids = [(6, 0, [company_warehouse.id])]
-    
     @api.model
     def default_get(self, fields_list):
-        defaults = super().default_get(fields_list)        
+        defaults = super().default_get(fields_list)
         if 'programa_id' in fields_list:
             user = self.env.user
-            employee = self.env['hr.employee'].search([('user_id', '=', user.id)], limit=1)            
+            employee = self.env['hr.employee'].search([('user_id', '=', user.id)], limit=1)
             if employee and employee.programa_id:
-                defaults['programa_id'] = employee.programa_id.id            
+                defaults['programa_id'] = employee.programa_id.id
         return defaults
 
     def filter_warehouses_by_program(self):
@@ -44,13 +32,12 @@ class StockWarehouse(models.Model):
             'view_mode': 'tree,form',
             'context': self.env.context,
         }
-        
         if self.env.user.has_group('stock.group_stock_manager'):
             # Administrador: ve todos los almacenes
             return action
         elif self.env.user.has_group('prefectura_inventario.group_stock_program_manager'):
             # Administrador de programa: solo almacenes de su programa
-            user_programa = self.env.user.employee_id.programa_id            
+            user_programa = self.env.user.employee_id.programa_id
             if user_programa:
                 action['domain'] = [('programa_id', '=', user_programa.id)]
             else:
@@ -58,7 +45,4 @@ class StockWarehouse(models.Model):
         else:
             # Usuario regular: no ve almacenes (o ajusta según tus necesidades)
             action['domain'] = [('id', '=', False)]
-        
         return action
-
-   

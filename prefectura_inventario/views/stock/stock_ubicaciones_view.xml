@@ -2,24 +2,30 @@
 <odoo>
     <data>
 
-        <record id="stock.view_location_form" model="ir.ui.view">
-            <field name="name">stock.location.form</field>
+        <record id="view_location_form_inherited" model="ir.ui.view">
+            <field name="name">stock.location.form.inherited</field>
             <field name="model">stock.location</field>
+            <field name="inherit_id" ref="stock.view_location_form"/>
             <field name="arch" type="xml">
-                <form string="Stock Location">
-                    <field name="company_id" invisible="1"/>
+                <!-- Modificar el contenido del formulario -->
+                <xpath expr="//form" position="attributes">
+                    <attribute name="string">Stock Location</attribute>
+                </xpath>
+
+                <!-- Modificar el contenido dentro de <sheet> -->
+                <xpath expr="//sheet" position="replace">
                     <sheet>
                         <div class="oe_button_box" name="button_box">
                             <button string="Putaway Rules" class="oe_stat_button" icon="fa-random" name="%(stock.location_open_putaway)d" type="action" groups="stock.group_stock_multi_locations" context="{'default_company_id': company_id}"/>
                             <button string="Current Stock" class="oe_stat_button" icon="fa-cubes" name="%(stock.location_open_quants)d" type="action"/>
                         </div>
-                        <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>                        
+                        <widget name="web_ribbon" title="Archived" bg_color="text-bg-danger" invisible="active"/>
                         <group>
-                         <field name="name" placeholder="e.g. Spare Stock"/>
-                           <field name="adm"/>
-                          <field name="programa_id" options="{'no_create': True, 'no_open': True, 'no_create_edit': True}" readonly="not adm" force_save="1"/>
-                          <field name="location_id_domain"/>
-                         <field name="location_id" options="{'domain_field': 'location_id_domain', 'no_create_edit': True, 'no_open': True,'no_create': True}" />
+                            <field name="name" placeholder="e.g. Spare Stock"/>
+                            <field name="adm"/>
+                            <field name="programa_id" options="{'no_create': True, 'no_open': True, 'no_create_edit': True}" readonly="not adm" force_save="1"/>
+                            <field name="location_id_domain"/>
+                            <field name="location_id" options="{'domain_field': 'location_id_domain', 'no_create_edit': True, 'no_open': True,'no_create': True}" />
                         </group>
                         <group>
                             <group string="Additional Information" name="additional_info">
@@ -42,10 +48,9 @@
                         </group>
                         <field name="comment" placeholder="External note..."/>
                     </sheet>
-                </form>
+                </xpath>
             </field>
         </record>
-
         <record id="action_location_by_program" model="ir.actions.server">
             <field name="name">Ubicaciones por Programa</field>
             <field name="model_id" ref="model_stock_location"/>
