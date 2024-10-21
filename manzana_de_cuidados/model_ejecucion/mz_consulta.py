@@ -72,6 +72,14 @@ class Consulta(models.Model):
         ('codigo_unique', 'unique(codigo)', 'El código de la consulta debe ser único.')
     ]
 
+    @api.constrains('codigo')
+    def _check_codigo(self):
+        for record in self:
+            if record.codigo:
+                codigo_existente = self.search([('codigo', '=', record.codigo), ('id', '!=', record.id)], limit=1)
+                if codigo_existente:
+                    raise UserError('Este servicio ya genero una consulta con el mismo código.')
+
     @api.model
     def default_get(self, fields_list):
         defaults = super(Consulta, self).default_get(fields_list)
@@ -124,18 +132,13 @@ class Consulta(models.Model):
             else:
                 record.imc = 0
 
-    @api.model
-    def create(self, vals):
-        if not vals.get('codigo'):
-            vals['codigo'] = self.env['ir.sequence'].next_by_code('mz.consulta.sequence') or 'Nuevo'
-        self.env['mz.asistencia_servicio'].search([('codigo', '=', vals['codigo'])]).write({'atendido': True})
-        return super(Consulta, self).create(vals)
     
     
 
     def create(self, vals):
         consulta = super(Consulta, self).create(vals)
         consulta.crear_historia_clinica()
+        self.env['mz.asistencia_servicio'].search([('codigo', '=', vals['codigo'])]).write({'atendido': True})
         return consulta
 
     def write(self, vals):

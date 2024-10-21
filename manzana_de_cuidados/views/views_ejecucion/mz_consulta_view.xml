@@ -33,12 +33,6 @@
                             </group>
                         </group>
                         <notebook>
-                            <page string="Motivo de Consulta y Síntomas">
-                                <group>
-                                    <field name="motivo_consulta" placeholder="Describa el motivo principal de la consulta"/>
-                                    <field name="sintomas" placeholder="Detalle los síntomas que presenta el paciente"/>
-                                </group>
-                            </page>
                             <page string="Signos Vitales">
                                 <group>
                                     <group>
@@ -52,6 +46,12 @@
                                         <field name="altura"/>
                                         <field name="imc"/>
                                     </group>
+                                </group>
+                            </page>
+                            <page string="Motivo de Consulta y Síntomas">
+                                <group>
+                                    <field name="motivo_consulta" placeholder="Describa el motivo principal de la consulta"/>
+                                    <field name="sintomas" placeholder="Detalle los síntomas que presenta el paciente"/>
                                 </group>
                             </page>
                             <page string="Examen Físico y Diagnóstico">
